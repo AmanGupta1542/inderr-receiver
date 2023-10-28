@@ -1,6 +1,6 @@
-from reciever_mod import reciever
+from reciever_mod import receiver
 
 
 if __name__ == '__main__':
-    while True:
-        reciever.recieve()
+    listen = receiver.Receiver()
+    listen.main()
