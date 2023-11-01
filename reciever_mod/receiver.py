@@ -14,11 +14,17 @@ class Receiver:
     fps = 80
     def __init__(self, text_var=''):
         self.root=Tk()
-        self.canvas = Canvas(self.root,bg='blue')
+        self.root.protocol("WM_DELETE_WINDOW", self.prevent_close)
+        # Header
+        # self.header_label = Label(self.root, text='New',font=('Times New Roman',30,'bold'), bg='blue', fg='white')
+        # self.header_label.pack(side='top', fill='x')
+
+        self.canvas = Canvas(self.root,bg='blue', highlightthickness=0)
         self.canvas.pack(fill=BOTH, expand=1)
-        self.canva_text=self.canvas.create_text(0,-2000,text=text_var,font=('Times New Roman',60,'bold'),fill='red',tags=("marquee",),anchor='w')
+        self.canva_text=self.canvas.create_text(0,0,text='Welcome to Indian Railway',font=('Times New Roman',30,'bold'),fill='yellow',tags=("marquee",),anchor='w')
         
-        
+    def prevent_close(self):
+        print("Window can not be closed")
 
     def output_audio(self, text):
         tts = gTTS(text)
@@ -30,7 +36,7 @@ class Receiver:
         x1,y1,x2,y2 = self.canvas.bbox("marquee")
         if(x2<0 or y1<0): #reset the coordinates
             x1 = self.canvas.winfo_width()
-            y1 = self.canvas.winfo_height()//2
+            y1 = self.canvas.winfo_height()-300
             self.canvas.coords("marquee",x1,y1)
         else:
             self.canvas.move("marquee", -2, 0)
@@ -39,7 +45,9 @@ class Receiver:
     def tk_window(self, text_var=''):
         
         self.root.title('Inderr')
-        self.root.wm_attributes("-zoomed", True)
+        # self.root.wm_attributes("-zoomed", True)
+        self.root.wm_attributes("-fullscreen", True)
+
         x1,y1,x2,y2 = self.canvas.bbox("marquee")
         width = x2-x1
         height = y2-y1
@@ -82,7 +90,11 @@ class Receiver:
         data = client_socket.recv(1024)
         text_var = data.decode('utf-8')
         print(f"Received data: {text_var}")
-        self.update_text(text_var)
+        # self.update_text(text_var)
+        header_label1 = Label(self.root, text='The next Station is',font=('Times New Roman',30,'bold'), bg='blue', fg='white')
+        header_label1.place(relx=0.5, rely=0.4, anchor='center')
+        header_label2 = Label(self.root, text=text_var[20:],font=('Times New Roman',40,'bold'), bg='blue', fg='yellow')
+        header_label2.place(relx=0.5, rely=0.5, anchor='center')
         # call output audio function
         self.output_audio(text_var)
 
