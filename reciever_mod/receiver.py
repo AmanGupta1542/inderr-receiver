@@ -4,6 +4,7 @@ import socket
 from decouple import config
 from tkinter import *
 import threading
+from datetime import datetime
 
 from . import helper_fun as chf
 
@@ -13,6 +14,7 @@ SERVER_PORT = int(config('PORT',None))
 class Receiver:
     fps = 80
     def __init__(self, text_var=''):
+        # self.output_audio('abc aman')
         self.root=Tk()
         self.root.protocol("WM_DELETE_WINDOW", self.prevent_close)
         # Header
@@ -27,9 +29,18 @@ class Receiver:
         print("Window can not be closed")
 
     def output_audio(self, text):
-        tts = gTTS(text)
-        tts.save('output.mp3')
-        os.system(f"mpg123 output.mp3")
+        try:
+            # Get the current timestamp
+            current_timestamp = datetime.now()
+
+            # Format the timestamp as a string (adjust the format as needed)
+            timestamp_str = current_timestamp.strftime("%Y-%m-%d_%H-%M-%S")
+
+            tts = gTTS(text)
+            tts.save(f"output_{timestamp_str}.mp3")
+            os.system(f"mpg123 output_{timestamp_str}.mp3")
+        except Exception as e:
+            print(f"Error: {e}")
 
 
     def shift(self):

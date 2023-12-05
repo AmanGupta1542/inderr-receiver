@@ -6,6 +6,7 @@ gTTS==2.4.0
 h11==0.14.0
 idna==3.4
 mpg123==0.4
+pyserial==3.5
 python-decouple==3.8
 python-engineio==4.8.0
 python-socketio==5.10.0
