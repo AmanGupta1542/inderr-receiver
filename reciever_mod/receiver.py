@@ -7,6 +7,7 @@ import threading
 from datetime import datetime
 
 from . import helper_fun as chf
+from .tk_window import DisplayDesign
 
 SERVER_IP = config('IP',None)
 SERVER_PORT = int(config('PORT',None))
@@ -15,15 +16,21 @@ class Receiver:
     fps = 80
     def __init__(self, text_var=''):
         # self.output_audio('abc aman')
-        self.root=Tk()
-        self.root.protocol("WM_DELETE_WINDOW", self.prevent_close)
+        self.tk_data_dict = {
+            'next_station': '',
+            'current_speed': '',
+            'late_by': '',
+            'stations': ''
+            }
+        # self.root=Tk()
+        # self.root.protocol("WM_DELETE_WINDOW", self.prevent_close)
         # Header
         # self.header_label = Label(self.root, text='New',font=('Times New Roman',30,'bold'), bg='blue', fg='white')
         # self.header_label.pack(side='top', fill='x')
 
-        self.canvas = Canvas(self.root,bg='blue', highlightthickness=0)
-        self.canvas.pack(fill=BOTH, expand=1)
-        self.canva_text=self.canvas.create_text(0,0,text='Welcome to Indian Railway',font=('Times New Roman',30,'bold'),fill='yellow',tags=("marquee",),anchor='w')
+        # self.canvas = Canvas(self.root,bg='blue', highlightthickness=0)
+        # self.canvas.pack(fill=BOTH, expand=1)
+        # self.canva_text=self.canvas.create_text(0,0,text='Welcome to Indian Railway',font=('Times New Roman',30,'bold'),fill='yellow',tags=("marquee",),anchor='w')
         
     def prevent_close(self):
         print("Window can not be closed")
@@ -54,19 +61,20 @@ class Receiver:
         self.canvas.after(1000//Receiver.fps, self.shift)
 
     def tk_window(self, text_var=''):
-        
-        self.root.title('Inderr')
-        # self.root.wm_attributes("-zoomed", True)
-        self.root.wm_attributes("-fullscreen", True)
+        self.dd = DisplayDesign(self.tk_data_dict)
+        self.dd.run()
+        # self.root.title('Inderr')
+        # # self.root.wm_attributes("-zoomed", True)
+        # self.root.wm_attributes("-fullscreen", True)
 
-        x1,y1,x2,y2 = self.canvas.bbox("marquee")
-        width = x2-x1
-        height = y2-y1
-        self.canvas['width']=width
-        self.canvas['height']=height
-        fps=60    #Change the fps to make the animation faster/slower
-        self.shift()
-        self.root.mainloop()
+        # x1,y1,x2,y2 = self.canvas.bbox("marquee")
+        # width = x2-x1
+        # height = y2-y1
+        # self.canvas['width']=width
+        # self.canvas['height']=height
+        # fps=60    #Change the fps to make the animation faster/slower
+        # self.shift()
+        # self.root.mainloop()
 
     def update_text(self, text_var):
         self.canvas.itemconfig(self.canva_text, text=text_var)
@@ -102,10 +110,18 @@ class Receiver:
         text_var = data.decode('utf-8')
         print(f"Received data: {text_var}")
         # self.update_text(text_var)
-        header_label1 = Label(self.root, text='The next Station is',font=('Times New Roman',30,'bold'), bg='blue', fg='white')
-        header_label1.place(relx=0.5, rely=0.4, anchor='center')
-        header_label2 = Label(self.root, text=text_var[20:],font=('Times New Roman',40,'bold'), bg='blue', fg='yellow')
-        header_label2.place(relx=0.5, rely=0.5, anchor='center')
+        self.dd.update_data(
+            {
+            'next_station': text_var,
+            'current_speed': '20km/h',
+            'late_by': '30 minutes',
+            'stations': ''
+            }
+        )
+        # header_label1 = Label(self.root, text='The next Station is',font=('Times New Roman',30,'bold'), bg='blue', fg='white')
+        # header_label1.place(relx=0.5, rely=0.4, anchor='center')
+        # header_label2 = Label(self.root, text=text_var[20:],font=('Times New Roman',40,'bold'), bg='blue', fg='yellow')
+        # header_label2.place(relx=0.5, rely=0.5, anchor='center')
         # call output audio function
         self.output_audio(text_var)
 
