@@ -3,7 +3,6 @@ from time import strftime
 from datetime import datetime
 
 from .constants import *
-from .stations import StationDesign
 
 class DisplayDesign():
     def __init__(self, data_dict, *args, **kwargs):
@@ -14,7 +13,6 @@ class DisplayDesign():
         self.root.wm_attributes("-fullscreen", True)
         self.root.geometry("500x500")
         self.root.protocol("WM_DELETE_WINDOW", self.prevent_close)
-        self.root.configure(bg='blue')
 
         self.WINDOW_WIDTH = self.root.winfo_screenwidth()
         self.WINDOW_HEIGHT = self.root.winfo_screenheight()
@@ -35,8 +33,6 @@ class DisplayDesign():
         self.body_frame.pack(fill="both", expand=True)
         # self.body_frame.configure(width=self.WINDOW_WIDTH, height=self.WINDOW_HEIGHT* 0.6)
         self.footer_frame.pack(side = BOTTOM)
-        height_of_footer_frame = self.footer_frame.winfo_reqheight()
-        print(f"Height of self.footer_frame: {height_of_footer_frame}")
 
     def sub_frames(self):
         
@@ -62,7 +58,7 @@ class DisplayDesign():
         # wel_message.place(x=10, y=50)
 
         # Canvas for the marquee
-        canvas = Canvas(self.header_frame, bg='blue')
+        canvas = Canvas(self.header_frame, bg='black')
         canvas.pack(fill=BOTH, expand=1)
 
         text_var = "Welcome to Indian Railway"
@@ -131,10 +127,8 @@ class DisplayDesign():
         # frame.pack()
 
     def footer(self):
-        StationDesign(self.footer_frame, self.footer_frame.winfo_reqheight(), self.footer_frame.winfo_reqwidth())
-        
-        # self.stat = Label(self.footer_frame, text="Stations detail", width=self.WINDOW_WIDTH)
-        # self.stat.pack()
+        self.stat = Label(self.footer_frame, text="Stations detail", width=self.WINDOW_WIDTH)
+        self.stat.pack()
 
     def run(self):
         self.main_frame()
