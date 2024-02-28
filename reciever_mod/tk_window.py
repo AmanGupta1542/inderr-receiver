@@ -11,9 +11,9 @@ class DisplayDesign():
         self.root = root = Tk()
         self.root.title("Inderr")
         # self.root.state("zoomed")
-        # self.root.wm_attributes("-fullscreen", True)
+        self.root.wm_attributes("-fullscreen", True)
         self.root.geometry("1300x677")
-        # self.root.protocol("WM_DELETE_WINDOW", self.prevent_close)
+        self.root.protocol("WM_DELETE_WINDOW", self.prevent_close)
         self.root.configure(bg='blue')
 
         self.WINDOW_WIDTH = self.root.winfo_screenwidth()
