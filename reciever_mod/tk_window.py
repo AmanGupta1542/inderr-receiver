@@ -11,9 +11,9 @@ class DisplayDesign():
         self.root = root = Tk()
         self.root.title("Inderr")
         # self.root.state("zoomed")
-        self.root.wm_attributes("-fullscreen", True)
-        self.root.geometry("500x500")
-        self.root.protocol("WM_DELETE_WINDOW", self.prevent_close)
+        # self.root.wm_attributes("-fullscreen", True)
+        self.root.geometry("1300x677")
+        # self.root.protocol("WM_DELETE_WINDOW", self.prevent_close)
         self.root.configure(bg='blue')
 
         self.WINDOW_WIDTH = self.root.winfo_screenwidth()
@@ -24,13 +24,15 @@ class DisplayDesign():
 
     def main_frame(self):
 
-        self.header_frame = Frame(self.root, highlightbackground="blue", highlightthickness=2, bg="black")
+        self.header_frame = Frame(self.root, highlightbackground=HEADER_BG_COLOR, highlightthickness=HIGHLIGHTTHICKNESS, bg=HEADER_BG_COLOR)
         self.header_frame.pack_propagate(False)
         self.header_frame.configure(width=self.WINDOW_WIDTH, height=60)
-        self.footer_frame = Frame(self.root, highlightbackground="blue", highlightthickness=2, bg="black")
+        self.footer_frame = Frame(self.root)
+        # self.footer_frame = Frame(self.root, highlightbackground=HEADER_BG_COLOR, highlightthickness=HIGHLIGHTTHICKNESS, bg=HEADER_BG_COLOR)
         self.footer_frame.pack_propagate(False)
         self.footer_frame.configure(width=self.WINDOW_WIDTH, height=200)
-        self.body_frame = Frame(self.root, highlightbackground="blue", highlightthickness=2)
+        self.body_frame = Frame(self.root)
+        # self.body_frame = Frame(self.root, highlightbackground="blue", highlightthickness=HIGHLIGHTTHICKNESS)
         self.header_frame.pack()
         self.body_frame.pack(fill="both", expand=True)
         # self.body_frame.configure(width=self.WINDOW_WIDTH, height=self.WINDOW_HEIGHT* 0.6)
@@ -62,11 +64,11 @@ class DisplayDesign():
         # wel_message.place(x=10, y=50)
 
         # Canvas for the marquee
-        canvas = Canvas(self.header_frame, bg='blue')
+        canvas = Canvas(self.header_frame, bg=HEADER_BG_COLOR, bd=0, highlightthickness=0, relief='ridge')
         canvas.pack(fill=BOTH, expand=1)
 
         text_var = "Welcome to Indian Railway"
-        text = canvas.create_text(0, 25, text=text_var, font=('Times New Roman', 30, 'bold'), fill='white', tags=("marquee",), anchor='w')
+        text = canvas.create_text(0, 25, text=text_var, font=('Times New Roman', 30, 'bold'), fill=HEADER_TEXT_COLOR, tags=("marquee",), anchor='w')
 
         x1, y1, x2, y2 = canvas.bbox("marquee")
         width = x2 - x1
@@ -78,8 +80,8 @@ class DisplayDesign():
 
     def body(self):
         
-        self.data_left_frame = Frame(self.body_frame, highlightbackground="red", highlightthickness=2)
-        self.data_right_frame = Frame(self.body_frame, highlightbackground="red", highlightthickness=2)
+        self.data_left_frame = Frame(self.body_frame, highlightbackground=BODY_TABLE_BOARDER_COLOR, highlightthickness=HIGHLIGHTTHICKNESS)
+        self.data_right_frame = Frame(self.body_frame, highlightbackground=BODY_TABLE_BOARDER_COLOR, highlightthickness=HIGHLIGHTTHICKNESS)
         self.data_left_frame.pack_propagate(False)
         self.data_left_frame.configure(width=self.WINDOW_WIDTH/2, height=200)
         self.data_left_frame.pack(side = LEFT)
@@ -92,7 +94,7 @@ class DisplayDesign():
         self.w2 = Label(self.data_left_frame, text=self.data_dict['next_station'], font=(FONT_TYPE, 30, 'bold'))
         self.w2.pack()
 
-        self.t1 = Frame(self.data_right_frame, highlightbackground="red", highlightthickness=2)
+        self.t1 = Frame(self.data_right_frame, highlightbackground=BODY_TABLE_BOARDER_COLOR, highlightthickness=HIGHLIGHTTHICKNESS)
         self.t1.pack(fill=BOTH, expand =1)
         self.speed_l = Label(self.t1, text=f"Speed ", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
         self.speed_l.pack(side = LEFT)
@@ -103,7 +105,7 @@ class DisplayDesign():
 
         ################################
         # time = Label(self.data_right_frame, text="Time - 12:11AM", font=(FONT_TYPE, FONT_SIZES['h3'], 'bold'))
-        self.t2 = Frame(self.data_right_frame, highlightbackground="red", highlightthickness=2)
+        self.t2 = Frame(self.data_right_frame, highlightbackground=BODY_TABLE_BOARDER_COLOR, highlightthickness=HIGHLIGHTTHICKNESS)
         self.t2.pack(fill=BOTH, expand =1)
         self.time_l = Label(self.t2, text=f"Time ", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
         self.time_l.pack(side = LEFT)

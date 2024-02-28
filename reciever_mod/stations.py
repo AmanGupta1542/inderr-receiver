@@ -1,4 +1,5 @@
 import tkinter as tk
+from .constants import *
 
 STATIONS0 = [
     {
@@ -307,11 +308,11 @@ class StationDesign(tk.Frame):
 
         # Create a Canvas
         self.canvas = tk.Canvas(root, width=self.screen_width, height=self.screen_height)
-        self.canvas.config(highlightthickness=2, highlightbackground="blue")
+        self.canvas.config(highlightthickness=2, highlightbackground=FOOTER_TEXT_COLOR)
         self.canvas.pack()
 
         self.start_point = 5
-        self.x = 100
+        self.x = 400
         self.y = int(self.screen_height/2)
         self.circle_radius = 5
         self.line_width = 150
@@ -327,7 +328,7 @@ class StationDesign(tk.Frame):
     def draw_shape(self):
         self.station_points = []
         for station in STATIONS:
-            self.line_width = station['distance']
+            self.line_width = 250
             if station['order'] ==1:
                 self.station_points.append(self.x)
                 self.draw_circle(self.x, self.y, self.circle_radius)
@@ -370,16 +371,16 @@ class StationDesign(tk.Frame):
 
     def draw_station_name(self):
         i = 0
-        self.canvas.create_text(self.x-60, self.y-40, text="ET", font=('Times New Roman', 15, 'bold'))
-        self.canvas.create_text(self.x-60, self.y-20, text="DT", font=('Times New Roman', 15, 'bold'))
-        self.canvas.create_text(self.x-60, self.y+20, text="Station", font=('Times New Roman', 15, 'bold'))
+        self.canvas.create_text(self.x-300, self.y-40, text="ET", font=('Times New Roman', 18, 'bold'))
+        self.canvas.create_text(self.x-300, self.y-20, text="DT", font=('Times New Roman', 18, 'bold'))
+        self.canvas.create_text(self.x-300, self.y+20, text="Station", font=('Times New Roman', 18, 'bold'))
 
         for station in STATIONS:
             # if station['order'] != len(STATIONS):
             #     self.canvas.create_text((self.station_points[i]+self.station_points[i+1])/2, self.y+15, text=round((station['distance']-50), 1))
-            self.canvas.create_text(self.station_points[i], self.y+20, text=station['abbr'], font=('Times New Roman', 12, 'bold'), fill='blue')
-            self.canvas.create_text(self.station_points[i], self.y-20, text=station['delay_time'], font=('Times New Roman', 12, 'bold'), fill='black')
-            self.canvas.create_text(self.station_points[i], self.y-40, text=station['estimate_time'], font=('Times New Roman', 12, 'bold'), fill='blue')
+            self.canvas.create_text(self.station_points[i], self.y+20, text=station['abbr'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR)
+            self.canvas.create_text(self.station_points[i], self.y-20, text=station['delay_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR)
+            self.canvas.create_text(self.station_points[i], self.y-40, text=station['estimate_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR)
             i+=1
 
 
