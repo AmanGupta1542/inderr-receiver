@@ -104,6 +104,116 @@ STATIONS0 = [
         'delay_time': '-'
     }
 ]
+STATIONS0 = [
+    {
+        'name': 'Bhopal Junction',
+        'abbr': 'BPL',
+        'total_distance': 53.4,
+        'raw_distance': 53.4,
+        'order': 1,
+        'estimate_time': 'Start',
+        'delay_time': '-'
+    },
+    {
+        'name': 'Vidisha',
+        'abbr': "BHS",
+        'total_distance': 92.9,
+        'raw_distance': 39.5,
+        'order':2,
+        'estimate_time': '6:32 p.m.',
+        'delay_time': '-'
+    },
+    {
+        'name': 'Ganj Basoda',
+        'abbr': "BAQ",
+        'total_distance': 121.3,
+        'raw_distance': 28.4,
+        'order':3,
+        'estimate_time': '7:02 p.m.',
+        'delay_time': '-'
+    },
+    {
+        'name': 'Mandi Bamora',
+        'abbr': "MABA",
+        'total_distance': 138.7,
+        'raw_distance': 17.4,
+        'order':4,
+        'estimate_time': '7:27 p.m.',
+        'delay_time': '-'
+    },
+    {
+        'name': 'Bina',
+        'abbr': "BINA",
+        'total_distance': 160.4,
+        'raw_distance': 21.7,
+        'order':5,
+        'estimate_time': '7:55 p.m.',
+        'delay_time': '-'
+    },
+    {
+        'name': 'Khurai',
+        'abbr': "KYE",
+        'total_distance': 213.2,
+        'raw_distance': 52.8,
+        'order':6,
+        'estimate_time': '8:30 p.m.',
+        'delay_time': '-'
+    },
+    {
+        'name': 'Saugor',
+        'abbr': "SGO",
+        'total_distance': 220.3,
+        'raw_distance': 7.1,
+        'order':7,
+        'estimate_time': '9:22 p.m.',
+        'delay_time': '-'
+    },
+    {
+        'name': 'Makronia',
+        'abbr': "MKRN",
+        'total_distance': 251.3,
+        'raw_distance': 31,
+        'order':8,
+        'estimate_time': '9:36 p.m.',
+        'delay_time': '-'
+    },
+    {
+        'name': 'Ganeshganj',
+        'abbr': "GAJ",
+        'total_distance': 264.2,
+        'raw_distance': 12.9,
+        'order':9,
+        'estimate_time': '10:03 p.m.',
+        'delay_time': '-'
+    },
+    {
+        'name': 'Patharia',
+        'abbr': "PHA",
+        'total_distance': 290.3,
+        'raw_distance': 26.1,
+        'order':10,
+        'estimate_time': '10:18 p.m.',
+        'delay_time': '-'
+    },
+    {
+        'name': 'Damoh',
+        'abbr': "DMO",
+        'total_distance': 0,
+        'raw_distance': 0,
+        'order':11,
+        'estimate_time': '10:45 p.m.',
+        'delay_time': '-'
+    },
+    {
+        'name': 'Temp',
+        'abbr': "tmp",
+        'total_distance': 92.9,
+        'raw_distance': 39.5,
+        'order':12,
+        'estimate_time': '6:32 p.m.',
+        'delay_time': '-'
+    },
+]
 STATIONS1 = [
     {
         'name': 'station 1',
@@ -491,7 +601,7 @@ class StationDesign(tk.Frame):
             # self.canvas.coords(self.train, self.x, self.y, self.x + 1, self.y + 10)
             self.canvas.coords(self.train, self.p, self.q, self.p + 10, self.q + 10)
             if move_train_forward:
-                self.canvas.after(1, self.move_train) # increase value to slow dot move speed
+                self.canvas.after(1, self.move_train)
 
     def draw_station_name(self):
         i = 0
