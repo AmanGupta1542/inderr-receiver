@@ -290,7 +290,7 @@ STATIONS = [
     }
 ]
 
-DISTANCE_BW_ST_IN_PX = 120
+DISTANCE_BW_ST_IN_PX = 250
 STATION_STRT_PX = 400
 
 # Function to add a new key-value pair
@@ -374,7 +374,7 @@ class StationDesign(tk.Frame):
 
     def shift_stations_left(self, current_station_index):
         print('shifting call')
-        self.p = 655
+        self.p = self.station_points[1]
         print(self.p)
         print(self.q)
         print(self.p+10)
@@ -422,9 +422,9 @@ class StationDesign(tk.Frame):
         print('self.shift_call', self.shift_call)
         for i in range(self.shift_call+1):
             if i==0:
-                total_leave_station = total_leave_station+5
+                total_leave_station = total_leave_station+self.station_capacity
             else:
-                total_leave_station = total_leave_station+3
+                total_leave_station = total_leave_station+(self.station_capacity-2)
             
         last_created_stat_count = len(self.stations) - total_leave_station
         is_last_round = last_created_stat_count <= (self.station_capacity - 1)
