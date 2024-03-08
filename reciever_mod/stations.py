@@ -290,7 +290,7 @@ STATIONS = [
     }
 ]
 
-DISTANCE_BW_ST_IN_PX = 250
+DISTANCE_BW_ST_IN_PX = 120
 STATION_STRT_PX = 400
 
 # Function to add a new key-value pair
@@ -334,7 +334,7 @@ class StationDesign(tk.Frame):
 
     def draw_station_circle(self):
         self.station_points = []
-        for station in STATIONS:
+        for station in self.stations:
             self.line_width = DISTANCE_BW_ST_IN_PX
             if station['order'] ==1:
                 station['x_coord'] = self.x
@@ -345,7 +345,7 @@ class StationDesign(tk.Frame):
                 self.draw_horizontal_line(self.x+self.circle_radius, self.y, self.line_width, tag=station['abbr']+"_line")
                 self.next_x = self.x+self.circle_radius+self.line_width
                 
-            elif station['order'] == len(STATIONS):
+            elif station['order'] == len(self.stations):
                 # self.draw_circle(self.x+self.circle_radius+self.line_width+self.circle_radius, self.y, self.circle_radius)
                 self.draw_circle(self.next_x+self.circle_radius, self.y, self.circle_radius, tag=station['abbr']+"_circle") # drawing a circle to represent station
                 self.station_points.append(self.next_x)
@@ -360,7 +360,7 @@ class StationDesign(tk.Frame):
                 self.next_x = self.next_x+(self.circle_radius*2)+self.line_width
         print(self.next_x)
         print(self.station_points)
-        print(STATIONS)
+        print(self.stations)
 
     def create_train(self):
         
@@ -392,29 +392,29 @@ class StationDesign(tk.Frame):
         print('new',self.station_points)
         cond = (self.shift_call*(self.station_capacity-2))
         for i in range((self.shift_call*(self.station_capacity-2)) +1 , cond+self.station_capacity):
-            print('deleted, ', STATIONS[i]['abbr'])
-            self.canvas.delete(STATIONS[i]['abbr'])
-            self.canvas.delete(STATIONS[i]['abbr']+"_dt")
-            self.canvas.delete(STATIONS[i]['abbr']+"_et")
+            print('deleted, ', self.stations[i]['abbr'])
+            self.canvas.delete(self.stations[i]['abbr'])
+            self.canvas.delete(self.stations[i]['abbr']+"_dt")
+            self.canvas.delete(self.stations[i]['abbr']+"_et")
         
         r = (self.station_capacity-1) if len(self.station_points) > (self.station_capacity-1) else (len(self.station_points)) # 11 > 5
         for i in range(r):
             ind = ((self.shift_call*(self.station_capacity-2))+self.station_capacity+i)-1
             self.ind = ind
             print('index', ind)
-            print(len(STATIONS))
-            print('created, ', STATIONS[ind]['abbr'])
+            print(len(self.stations))
+            print('created, ', self.stations[ind]['abbr'])
             x_coord = self.station_points[i]+(self.circle_radius*2)+self.line_width if (i+1 == r and len(self.station_points)<=len(self.station_points)) else self.station_points[i+1]
             print(x_coord)
             if x_coord not in self.station_points:
                 print('draw last circle')
-                # self.canvas.create_line(x_coord+(self.circle_radius*2), self.y, x_coord+(self.circle_radius*2)+self.line_width, self.y, width=2, fill="black", tags=STATIONS[ind]['abbr']+"_line")
-                # self.draw_horizontal_line(x_coord+(self.circle_radius*2), self.y, self.line_width, tag=STATIONS[ind]['abbr']+"_line")
-                # self.draw_circle(x_coord+self.circle_radius, self.y, self.circle_radius, tag=STATIONS[ind]['abbr']+"_circle") # drawing a circle to represent station
+                # self.canvas.create_line(x_coord+(self.circle_radius*2), self.y, x_coord+(self.circle_radius*2)+self.line_width, self.y, width=2, fill="black", tags=self.stations[ind]['abbr']+"_line")
+                # self.draw_horizontal_line(x_coord+(self.circle_radius*2), self.y, self.line_width, tag=self.stations[ind]['abbr']+"_line")
+                # self.draw_circle(x_coord+self.circle_radius, self.y, self.circle_radius, tag=self.stations[ind]['abbr']+"_circle") # drawing a circle to represent station
                 self.station_points.append(x_coord)
-            self.canvas.create_text(x_coord, self.y+20, text=STATIONS[ind]['abbr'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=STATIONS[ind]['abbr'])
-            self.canvas.create_text(x_coord, self.y-20, text=STATIONS[ind]['delay_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=STATIONS[ind]['abbr']+"_dt")
-            self.canvas.create_text(x_coord, self.y-40, text=STATIONS[ind]['estimate_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=STATIONS[ind]['abbr']+"_et")
+            self.canvas.create_text(x_coord, self.y+20, text=self.stations[ind]['abbr'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr'])
+            self.canvas.create_text(x_coord, self.y-20, text=self.stations[ind]['delay_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_dt")
+            self.canvas.create_text(x_coord, self.y-40, text=self.stations[ind]['estimate_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_et")
             
         
         total_leave_station = 0
@@ -425,20 +425,20 @@ class StationDesign(tk.Frame):
             else:
                 total_leave_station = total_leave_station+3
             
-        last_created_stat_count = len(STATIONS) - total_leave_station
+        last_created_stat_count = len(self.stations) - total_leave_station
         is_last_round = last_created_stat_count <= (self.station_capacity - 1)
         print(last_created_stat_count)
         print(is_last_round)
         if is_last_round:
-            print('stations len', len(STATIONS))
-            for i in range(last_created_stat_count+1, len(STATIONS)):
+            print('stations len', len(self.stations))
+            for i in range(last_created_stat_count+1, len(self.stations)):
                 print(i)
-                self.canvas.delete(STATIONS[i]['abbr']+"_line")
-                if i+1 < len(STATIONS):
-                    self.canvas.delete(STATIONS[i+1]['abbr']+"_circle") #err
+                self.canvas.delete(self.stations[i]['abbr']+"_line")
+                if i+1 < len(self.stations):
+                    self.canvas.delete(self.stations[i+1]['abbr']+"_circle") #err
 
         
-        # self.canvas.delete(STATIONS[0]['abbr']+'_circle')
+        # self.canvas.delete(self.stations[0]['abbr']+'_circle')
         self.train = self.canvas.create_oval(self.p, self.q, self.p + 10, self.q + 10, fill="red", tag='train')
         # self.canvas.coords(self.train, self.p, self.q, self.p + 10, self.q + 10)
         self.shift_call = self.shift_call +1
@@ -449,8 +449,8 @@ class StationDesign(tk.Frame):
         print(self.station_points)
         # try:
         if current_station_index+1 == len(self.station_points) :
-            if len(STATIONS) > self.station_capacity:
-                if self.ind+1 == len(STATIONS):
+            if len(self.stations) > self.station_capacity:
+                if self.ind+1 == len(self.stations):
                     print('Reach Destination')
                     return False
                 else:
@@ -499,8 +499,8 @@ class StationDesign(tk.Frame):
         self.canvas.create_text(self.x-300, self.y-20, text="DT", font=('Times New Roman', 18, 'bold'))
         self.canvas.create_text(self.x-300, self.y+20, text="Station", font=('Times New Roman', 18, 'bold'))
 
-        for station in STATIONS:
-            # if station['order'] != len(STATIONS):
+        for station in self.stations:
+            # if station['order'] != len(self.stations):
             #     self.canvas.create_text((self.station_points[i]+self.station_points[i+1])/2, self.y+15, text=round((station['distance']-50), 1))
             self.canvas.create_text(self.station_points[i], self.y+20, text=station['abbr'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr'])
             self.canvas.create_text(self.station_points[i], self.y-20, text=station['delay_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_dt")
@@ -508,10 +508,10 @@ class StationDesign(tk.Frame):
             i+=1
 
 
-    def draw_horizontal_line(self, x1, y1, length, tag=None):
+    def draw_horizontal_line(self, x1, y1, length, tag=None, dash=None):
         x2 = x1 + length
         if tag:
-            self.canvas.create_line(x1, y1, x2, y1, width=2, fill="black", tags=tag)
+            self.canvas.create_line(x1, y1, x2, y1, width=2, fill="black", tags=tag, dash=None)
         else:
             self.canvas.create_line(x1, y1, x2, y1, width=2, fill="black")
 
@@ -529,7 +529,16 @@ class StationDesign(tk.Frame):
                 self.canvas.create_oval(x1, y1, x2, y2, outline="black", fill=fill, tags=tag)
             else:
                 self.canvas.create_oval(x1, y1, x2, y2, outline="black")
-
+    
+    def update_train_location(self, data):
+        # data will be 
+        # data = {
+        #     'next_station': {'name': 'Vidisha', 'lat': Decimal('23.522687'), 'lon': Decimal('77.815174'), 'order': 2, 'distance': 49.70376998384893}, 
+        #     'curr_location': {'lat': Decimal('23.270723'), 'lon': Decimal('77.414528')}, 
+        #     'speed': 0, 
+        #     'late_by': 0
+        # }
+        pass
 # if __name__ == "__main__":
 #     root = tk.Tk()
 #     app = HorizontalLineCircleDesignApp(root)

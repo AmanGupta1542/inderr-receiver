@@ -6,8 +6,8 @@ from .constants import *
 from .stations import StationDesign
 
 class DisplayDesign():
-    def __init__(self, data_dict, *args, **kwargs):
-        self.data_dict = data_dict
+    def __init__(self, *args, **kwargs):
+        self.data_dict = None
         self.root = root = Tk()
         self.root.title("Inderr")
         # self.root.state("zoomed")
@@ -91,7 +91,7 @@ class DisplayDesign():
 
         self.w1 = Label(self.data_left_frame, text="The next stations is", font=(FONT_TYPE, 30, 'bold'))
         self.w1.pack()
-        self.w2 = Label(self.data_left_frame, text=self.data_dict['next_station'], font=(FONT_TYPE, 30, 'bold'))
+        self.w2 = Label(self.data_left_frame, text=self.data_dict['next_station']['name'], font=(FONT_TYPE, 30, 'bold'))
         self.w2.pack()
 
         self.t1 = Frame(self.data_right_frame, highlightbackground=BODY_TABLE_BOARDER_COLOR, highlightthickness=HIGHLIGHTTHICKNESS)
@@ -99,7 +99,7 @@ class DisplayDesign():
         self.speed_l = Label(self.t1, text=f"Speed ", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
         self.speed_l.pack(side = LEFT)
 
-        self.speed_r = Label(self.t1, text=f"{self.data_dict['current_speed']}", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
+        self.speed_r = Label(self.t1, text=f"{self.data_dict['speed']}", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
         self.speed_r.pack(side = RIGHT)
         
 
@@ -133,19 +133,21 @@ class DisplayDesign():
         # frame.pack()
 
     def footer(self):
-        StationDesign(self.footer_frame, self.footer_frame.winfo_reqheight(), self.footer_frame.winfo_reqwidth())
+        self.station_obj = StationDesign(self.footer_frame, self.footer_frame.winfo_reqheight(), self.footer_frame.winfo_reqwidth(), self.data_dict['stations'])
         
         # self.stat = Label(self.footer_frame, text="Stations detail", width=self.WINDOW_WIDTH)
         # self.stat.pack()
 
-    def run(self):
+    def run(self, data):
+        self.data_dict = data
         self.main_frame()
         self.sub_frames()
         self.root.mainloop()
 
     def update_data(self, data):
         self.data_dict = data
-        self.w2.config(text=data['next_station'])
+        self.w2.config(text=data['next_station']['name'])
+        self.station_obj.update_train_location(data)
 
 
 # if __name__ == "__main__":
