@@ -302,7 +302,8 @@ def add_key_value(station):
 STATIONS = list(map(add_key_value, STATIONS0))
 
 class StationDesign(tk.Frame):
-    def __init__(self, root, height, width):
+    def __init__(self, root, height, width, stations):
+        self.stations = stations
         self.root = root
         # self.root.title("Horizontal Line and Circle Design")
         self.screen_width = width
