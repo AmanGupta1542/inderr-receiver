@@ -25,6 +25,7 @@ class Receiver:
     fps = 80
     def __init__(self, text_var=''):
         self.recieved_data = None
+        self.station_initialized = False
         # self.output_audio('abc aman')
         self.tk_data_dict = {
             'next_station': '',
@@ -74,11 +75,12 @@ class Receiver:
         self.dd = DisplayDesign()
         while self.recieved_data is None:
             pass
-        stations = self.recieved_data.get('stations', None)
-        if stations is not None:
-            self.dd.run(self.recieved_data)
-        else:
+        # self.stations = self.recieved_data.get('stations', None)
+        if self.station_initialized:
             self.dd.update_data(self.recieved_data)
+        else:
+            self.station_initialized = True
+            self.dd.run(self.recieved_data)
         # self.dd.run()
         # self.root.title('Inderr')
         # # self.root.wm_attributes("-zoomed", True)

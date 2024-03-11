@@ -332,7 +332,8 @@ class StationDesign(tk.Frame):
         self.draw_station_name()
         self.create_train()
         # self.move_train()
-        self.canvas.after(1000, self.move_train)
+        # self.canvas.after(1000, self.move_train)
+        self.move_train()
 
     def draw_station_circle(self):
         self.station_points = []
@@ -367,6 +368,8 @@ class StationDesign(tk.Frame):
             if self.station_points[i] >= self.screen_width:
                 self.station_capacity = i
                 break
+        if self.station_capacity == 0:
+            self.station_capacity = len(self.stations)
         print(self.station_capacity)
 
     def create_train(self):
@@ -446,7 +449,7 @@ class StationDesign(tk.Frame):
 
         if self.shift_call == 0:
             self.canvas.delete(self.stations[0]['abbr']+"_line")
-            self.draw_horizontal_line(self.station_points[0]+self.circle_radius, self.y, self.line_width, tag=self.stations[0]['abbr']+"_line", dash=(5,3))
+            self.draw_horizontal_line(self.station_points[0]+self.circle_radius, self.y, self.line_width, tag=self.stations[0]['abbr']+"_line", dash=(20,10))
         
         # self.canvas.delete(self.stations[0]['abbr']+'_circle')
         self.train = self.canvas.create_oval(self.p, self.q, self.p + 10, self.q + 10, fill="red", tag='train')
