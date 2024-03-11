@@ -308,11 +308,12 @@ class StationDesign(tk.Frame):
         # self.root.title("Horizontal Line and Circle Design")
         self.screen_width = width
         self.screen_height = height
-        self.station_capacity = math.ceil((width - STATION_STRT_PX)/DISTANCE_BW_ST_IN_PX)
+        # self.station_capacity = math.ceil((width - STATION_STRT_PX)/DISTANCE_BW_ST_IN_PX)
+        self.station_capacity = 0
 
         print("screen_width ", self.screen_width)
         print("screen_height ", self.screen_height)
-        print("station_capacity ", self.station_capacity)
+        # print("station_capacity ", self.station_capacity)
         self.shift_call = 0
         # Create a Canvas
         self.canvas = tk.Canvas(root, width=self.screen_width, height=self.screen_height)
@@ -362,6 +363,11 @@ class StationDesign(tk.Frame):
         print(self.next_x)
         print(self.station_points)
         print(self.stations)
+        for i in range(len(self.station_points)):
+            if self.station_points[i] >= self.screen_width:
+                self.station_capacity = i
+                break
+        print(self.station_capacity)
 
     def create_train(self):
         
@@ -438,6 +444,9 @@ class StationDesign(tk.Frame):
                 if i+1 < len(self.stations):
                     self.canvas.delete(self.stations[i+1]['abbr']+"_circle") #err
 
+        if self.shift_call == 0:
+            self.canvas.delete(self.stations[0]['abbr']+"_line")
+            self.draw_horizontal_line(self.station_points[0]+self.circle_radius, self.y, self.line_width, tag=self.stations[0]['abbr']+"_line", dash=(5,3))
         
         # self.canvas.delete(self.stations[0]['abbr']+'_circle')
         self.train = self.canvas.create_oval(self.p, self.q, self.p + 10, self.q + 10, fill="red", tag='train')
@@ -504,15 +513,15 @@ class StationDesign(tk.Frame):
             # if station['order'] != len(self.stations):
             #     self.canvas.create_text((self.station_points[i]+self.station_points[i+1])/2, self.y+15, text=round((station['distance']-50), 1))
             self.canvas.create_text(self.station_points[i], self.y+20, text=station['abbr'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr'])
-            self.canvas.create_text(self.station_points[i], self.y-20, text=station['delay_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_dt")
-            self.canvas.create_text(self.station_points[i], self.y-40, text=station['estimate_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_et")
+            self.canvas.create_text(self.station_points[i], self.y-20, text=f"{'End' if station['delay_time'] is None else station['delay_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_dt")
+            self.canvas.create_text(self.station_points[i], self.y-40, text=f"{'Start' if station['estimate_time'] is None else station['estimate_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_et")
             i+=1
 
 
     def draw_horizontal_line(self, x1, y1, length, tag=None, dash=None):
         x2 = x1 + length
         if tag:
-            self.canvas.create_line(x1, y1, x2, y1, width=2, fill="black", tags=tag, dash=None)
+            self.canvas.create_line(x1, y1, x2, y1, width=2, fill="black", tags=tag, dash=dash)
         else:
             self.canvas.create_line(x1, y1, x2, y1, width=2, fill="black")
 
