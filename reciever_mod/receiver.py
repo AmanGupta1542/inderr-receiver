@@ -77,9 +77,11 @@ class Receiver:
             pass
         # self.stations = self.recieved_data.get('stations', None)
         if self.station_initialized:
+            print('Updatinig Display Window')
             self.dd.update_data(self.recieved_data)
         else:
             self.station_initialized = True
+            print('Initializing Display Window')
             self.dd.run(self.recieved_data)
         # self.dd.run()
         # self.root.title('Inderr')
@@ -160,7 +162,7 @@ class Receiver:
             # header_label2 = Label(self.root, text=text_var[20:],font=('Times New Roman',40,'bold'), bg='blue', fg='yellow')
             # header_label2.place(relx=0.5, rely=0.5, anchor='center')
             # call output audio function
-            self.output_audio(NEXT_STATION_PREFIX+self.received_data['next_station']['name'])
+            self.output_audio(NEXT_STATION_PREFIX+self.recieved_data['next_station']['name'])
 
             # Close the sockets
             client_socket.close()
