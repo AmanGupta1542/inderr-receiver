@@ -133,38 +133,43 @@ class Receiver:
         #     if not chunk:
         #         break
         #     received_data+=chunk
-        data = client_socket.recv(4096)
-        # text_var = data.decode('utf-8')
-        print('while end')
-        deserialized_data = pickle.loads(data)
+        try:
+            data = client_socket.recv(4096)
+            # text_var = data.decode('utf-8')
+            print('while end')
+            deserialized_data = pickle.loads(data)
 
-        print(deserialized_data)
-        # text = data.decode()
-        # deserialized_data = json.loads(text)
-        # deserialized_data = pickle.loads(data, encoding='utf-8')
-        # deserialized_data = json.loads(received_data.decode('utf-8'))
-        # print(f"Received data: {deserialized_data}")
-        self.recieved_data = deserialized_data
-        
-            #     {
-            #     'next_station': text_var,
-            #     'current_speed': '20km/h',
-            #     'late_by': '30 minutes',
-            #     'stations': ''
-            #     }
-            # )
-        # self.update_text(text_var)
-        # header_label1 = Label(self.root, text='The next Station is',font=('Times New Roman',30,'bold'), bg='blue', fg='white')
-        # header_label1.place(relx=0.5, rely=0.4, anchor='center')
-        # header_label2 = Label(self.root, text=text_var[20:],font=('Times New Roman',40,'bold'), bg='blue', fg='yellow')
-        # header_label2.place(relx=0.5, rely=0.5, anchor='center')
-        # call output audio function
-        self.output_audio(NEXT_STATION_PREFIX+received_data['next_station']['name'])
+            print(deserialized_data)
+            # text = data.decode()
+            # deserialized_data = json.loads(text)
+            # deserialized_data = pickle.loads(data, encoding='utf-8')
+            # deserialized_data = json.loads(received_data.decode('utf-8'))
+            # print(f"Received data: {deserialized_data}")
+            self.recieved_data = deserialized_data
+            
+                #     {
+                #     'next_station': text_var,
+                #     'current_speed': '20km/h',
+                #     'late_by': '30 minutes',
+                #     'stations': ''
+                #     }
+                # )
+            # self.update_text(text_var)
+            # header_label1 = Label(self.root, text='The next Station is',font=('Times New Roman',30,'bold'), bg='blue', fg='white')
+            # header_label1.place(relx=0.5, rely=0.4, anchor='center')
+            # header_label2 = Label(self.root, text=text_var[20:],font=('Times New Roman',40,'bold'), bg='blue', fg='yellow')
+            # header_label2.place(relx=0.5, rely=0.5, anchor='center')
+            # call output audio function
+            self.output_audio(NEXT_STATION_PREFIX+self.received_data['next_station']['name'])
 
-        # Close the sockets
-        client_socket.close()
-        server_socket.close()
-        # tk_window(text_var)
+            # Close the sockets
+            client_socket.close()
+            server_socket.close()
+            # tk_window(text_var)
+        except pickle.UnpicklingError as e:
+            print("Error occur while unpickling : ", e)
+        except Exception as e:
+            print("An unknown error occur : ", e)
 
     def recieve_loop(self):
         while True:
