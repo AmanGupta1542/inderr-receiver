@@ -76,13 +76,13 @@ class Receiver:
         while self.recieved_data is None:
             pass
         # self.stations = self.recieved_data.get('stations', None)
-        if self.station_initialized:
-            print('Updatinig Display Window')
-            self.dd.update_data(self.recieved_data)
-        else:
-            self.station_initialized = True
-            print('Initializing Display Window')
-            self.dd.run(self.recieved_data)
+        # if self.station_initialized:
+        #     print('Updatinig Display Window')
+        #     self.dd.update_data(self.recieved_data)
+        # else:
+        print('Initializing Display Window')
+        self.station_initialized = True
+        self.dd.run(self.recieved_data)
         # self.dd.run()
         # self.root.title('Inderr')
         # # self.root.wm_attributes("-zoomed", True)
@@ -157,6 +157,9 @@ class Receiver:
                 #     }
                 # )
             # self.update_text(text_var)
+            if self.station_initialized:
+                print('Updatinig Display Window')
+                self.dd.update_data(self.recieved_data)
             # header_label1 = Label(self.root, text='The next Station is',font=('Times New Roman',30,'bold'), bg='blue', fg='white')
             # header_label1.place(relx=0.5, rely=0.4, anchor='center')
             # header_label2 = Label(self.root, text=text_var[20:],font=('Times New Roman',40,'bold'), bg='blue', fg='yellow')
