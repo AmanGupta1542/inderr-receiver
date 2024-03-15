@@ -18,6 +18,7 @@ class DisplayDesign():
 
         self.WINDOW_WIDTH = self.root.winfo_screenwidth()
         self.WINDOW_HEIGHT = self.root.winfo_screenheight()
+        self.station_obj = None
 
     def prevent_close(self):
         print("Window can not be closed")
@@ -146,8 +147,12 @@ class DisplayDesign():
 
     def update_data(self, data):
         self.data_dict = data
-        self.w2.config(text=data['next_station']['name'])
-        self.station_obj.update_train_location(data)
+        try:
+            if self.station_obj is not None:
+                self.w2.config(text=data['next_station']['name'])
+                self.station_obj.update_train_location(data)
+        except Exception as e:
+            print(e)
 
 
 # if __name__ == "__main__":

@@ -3,10 +3,11 @@ import os
 import socket
 import pickle
 import json
+import math
 from decouple import config
 from tkinter import *
 import threading
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from . import helper_fun as chf
 from .tk_window import DisplayDesign
@@ -21,9 +22,69 @@ SERVER_PORT = int(config('PORT',None))
 # deserialized_data = pickle.loads(data)
 
 # print(deserialized_data)
+
+class Detail:
+    def __init__(self, data1, data2, stations, next_station, rem_distance=0):
+        ''' data will be in {'curr_location': 'lat': 23.455, 'lon': 33.223, 'datetime': datetime object} format'''
+        # distance in km
+        self.stations = stations
+        self.next_station = next_station
+        self.instant_distance, self.rm_distance = self.haversine_distance(data1['curr_location']['lat'], data1['curr_location']['lon'], data2['curr_location']['lat'], data2['curr_location']['lon'], rem_distance)
+        self.seconds = self.calc_time_diff(data1['datetime'], data2['datetime'])
+        self.instant_speed = self.calc_speed()
+        
+        self.total_traveled_distance = None
+
+        # To calculate total time store departure time and subtract it with current time stamp and convert return data in hours, 
+        # then avg_speed = total_traveled_distance/total_time_taken
+
+    def haversine_distance(self, lat1, lon1, lat2, lon2, remain_dis):
+        # Convert Decimal values to float
+        lat1, lon1, lat2, lon2 = map(float, [lat1, lon1, lat2, lon2])
+
+        R = 6371  # Radius of the Earth in kilometers
+        d_lat = math.radians(lat2 - lat1)
+        d_lon = math.radians(lon2 - lon1)
+
+        a = (
+            math.sin(d_lat / 2) * math.sin(d_lat / 2) +
+            math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
+            math.sin(d_lon / 2) * math.sin(d_lon / 2)
+        )
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+        distance = R * c
+        print('distance calculation done')
+        rm_distance = float(self.next_station['distance']) - (float(distance)+remain_dis)
+        print(rm_distance)
+        return (distance,rm_distance)
+    
+    def calc_time_diff(self, start_time, end_time):
+        """
+        Calculate the time difference in seconds between two datetime objects.
+        
+        Args:
+            start_time (datetime): The starting datetime.
+            end_time (datetime): The ending datetime.
+        
+        Returns:
+            int: The time difference in seconds.
+        """
+        time_diff = end_time - start_time
+        return time_diff.total_seconds()
+    
+    def calc_speed(self):
+        time_diff_hours = self.seconds/3600
+        # distance in km, time in hour, so speed in km/h
+        speed = self.instant_distance / time_diff_hours  # Speed in kilometers per hour
+        return speed
+    
+
 class Receiver:
     fps = 80
     def __init__(self, text_var=''):
+        self.time_coord_1 = None
+        self.time_coord_2 = None
         self.recieved_data = None
         self.station_initialized = False
         # self.output_audio('abc aman')
@@ -33,6 +94,12 @@ class Receiver:
             'late_by': '',
             'stations': ''
             }
+        
+        self.distance = 0
+        self.seconds = 0
+        self.instant_speed = 0
+        self.remaining_distance = 0
+        self.avg_speed = 0
         # self.root=Tk()
         # self.root.protocol("WM_DELETE_WINDOW", self.prevent_close)
         # Header
@@ -104,6 +171,21 @@ class Receiver:
         self.canvas['width']=width
         self.canvas.coords("marquee",width,y1)
 
+    def calc_late_by(self):
+        remaining_distance = self.remaining_distance
+        avg_speed = self.avg_speed # in kmph
+        instent_speed = self.instant_speed # in kmph
+        time = remaining_distance/avg_speed # in hours
+        totaL_time_to_reach = datetime.now() + timedelta(hours=time)
+        next_station = list(filter(lambda x: x.get('name') == self.recieved_data['next_station']['name'], self.recieved_data['stations']))[0]
+        # convert next station arrived(estimate_time ) string in python datetime obj
+        next_stat_time = datetime.strptime(next_station['estimate_time'], '%H:%M')
+        time_difference  = totaL_time_to_reach - next_stat_time
+        minutes_difference = time_difference.total_seconds() / 60
+        res = minutes_difference
+        print(res)
+        return res
+    
     def recieve(self):
 
         # tk_window()
@@ -137,17 +219,48 @@ class Receiver:
         #     received_data+=chunk
         try:
             data = client_socket.recv(4096)
+            # timestamp
             # text_var = data.decode('utf-8')
             print('while end')
             deserialized_data = pickle.loads(data)
+            self.recieved_data = deserialized_data
+            if(self.time_coord_1 is None):
+                print("time_coord_1 is none")
+                self.time_coord_1 = {'curr_location' :deserialized_data['curr_location'], 'datetime': datetime.now()} # {'curr_location': 'lat': 23.455, 'lon': 33.223, 'datetime': datetime object}
+            else :
+                print("time_coord_1 is not none")
+                # store coordinates in second variable and perform calculatations
+                self.time_coord_2 = {'curr_location' :deserialized_data['curr_location'], 'datetime': datetime.now()} # {'curr_location': 'lat': 23.455, 'lon': 33.223, 'datetime': datetime object}
+                print('detail start')
+                detail = Detail(self.time_coord_1, self.time_coord_2, deserialized_data['stations'], deserialized_data['next_station'], self.remaining_distance)
+                print('detail end')
+                self.time_coord_1 = self.time_coord_2
 
+                self.distance += detail.instant_distance # in km
+                self.seconds += detail.seconds # in seconds
+                self.instant_speed = detail.instant_speed
+                print('detail end1')
+                self.remaining_distance = detail.rm_distance
+                print('detail end2')
+
+                self.avg_speed = self.distance / (self.seconds/3600)
+
+                print("***************  DATA START  ***************")
+                print("Total Distance", self.distance)
+                print("Total Seconds", self.seconds)
+                print("Instance Speed", self.instant_speed)
+                print("Remaining Distance", self.remaining_distance)
+                print("Average Speed", self.avg_speed)
+                print("***************  DATA END  ***************")
+
+                deserialized_data['speed'] = detail.instant_speed
+                deserialized_data['late_by'] = self.calc_late_by()
             print(deserialized_data)
             # text = data.decode()
             # deserialized_data = json.loads(text)
             # deserialized_data = pickle.loads(data, encoding='utf-8')
             # deserialized_data = json.loads(received_data.decode('utf-8'))
             # print(f"Received data: {deserialized_data}")
-            self.recieved_data = deserialized_data
             
                 #     {
                 #     'next_station': text_var,
@@ -173,8 +286,8 @@ class Receiver:
             # tk_window(text_var)
         except pickle.UnpicklingError as e:
             print("Error occur while unpickling : ", e)
-        except Exception as e:
-            print("An unknown error occur : ", e)
+        # except Exception as e:
+            # print("An unknown error occur : ", e)
 
     def recieve_loop(self):
         while True:
