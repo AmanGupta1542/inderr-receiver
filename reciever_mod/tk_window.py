@@ -148,8 +148,13 @@ class DisplayDesign():
     def update_data(self, data):
         self.data_dict = data
         try:
+            print('station_obj : is none')
             if self.station_obj is not None:
+                print('station object created')
                 self.w2.config(text=data['next_station']['name'])
+                self.speed_r.config(text=round(data['speed'], 0))
+                late_by_txt = 'Early By '+str(round(data['late_by'], 2))+ 'minutes' if data['late_by'] < 0 else 'Late By '+str(round(data['late_by'], 2))+ 'minutes'
+                self.late.config(text=late_by_txt)
                 self.station_obj.update_train_location(data)
         except Exception as e:
             print(e)

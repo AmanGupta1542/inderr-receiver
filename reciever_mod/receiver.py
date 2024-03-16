@@ -255,6 +255,7 @@ class Receiver:
 
                 deserialized_data['speed'] = detail.instant_speed
                 deserialized_data['late_by'] = self.calc_late_by()
+                self.recieved_data['instent_distance'] = self.distance
             print(deserialized_data)
             # text = data.decode()
             # deserialized_data = json.loads(text)

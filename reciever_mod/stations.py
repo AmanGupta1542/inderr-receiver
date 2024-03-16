@@ -303,7 +303,11 @@ STATIONS = list(map(add_key_value, STATIONS0))
 
 class StationDesign(tk.Frame):
     def __init__(self, root, height, width, stations):
-        self.stations = stations
+        self.total_stat_dis = 0
+        # self.stations = list(map(lambda stat: {'px_per_km': DISTANCE_BW_ST_IN_PX/stat['distance'] if stat['distance'] else 0, **stat}, stations))
+        self.stations = list(map(self.add_key_value, stations))
+        print('mapped stations')
+        print(self.stations)
         self.root = root
         # self.root.title("Horizontal Line and Circle Design")
         self.screen_width = width
@@ -333,7 +337,15 @@ class StationDesign(tk.Frame):
         self.create_train()
         # self.move_train()
         # self.canvas.after(1000, self.move_train)
-        self.move_train()
+        # self.move_train()
+
+    def add_key_value(self, station):
+        self.total_stat_dis = (self.total_stat_dis + station['distance']) if station['distance'] else 0
+        station['total_distance'] = self.total_stat_dis
+        station['px_per_km'] = DISTANCE_BW_ST_IN_PX/station['distance'] if station['distance'] else 0
+        # print('mapped stations')
+        # print(station)
+        return station
 
     def draw_station_circle(self):
         self.station_points = []
@@ -506,6 +518,32 @@ class StationDesign(tk.Frame):
             if move_train_forward:
                 self.canvas.after(1, self.move_train) # increase value to slow dot move speed
 
+    def move_train_by_loc(self, train_px_move):
+        print('move station by loc 1')
+        if(self.p != self.next_x):
+            # print(self.p, self.next_x)
+            print('move station by loc 2')
+            self.p += train_px_move
+            self.p = round(self.p, 1)
+            # self.q += 1
+            # print(self.p)
+            move_train_forward = True
+            if self.p in self.station_points:
+                print('move station by loc 3')
+                print(self.screen_width)
+                print(self.p)
+                move_train_forward = self.check_station_screen_size(self.p)
+                print(self.station_points)
+                # time.sleep(1)
+            # Move the circle by dx and dy
+            # self.canvas.coords(self.train, self.x, self.y, self.x + 1, self.y + 10)
+            # self.canvas.coords(self.train, self.p, self.q, self.p + 10, self.q + 10)
+            if move_train_forward:
+                print('move station by loc 4')
+                # self.canvas.after(1, self.move_train) # increase value to slow dot move speed
+                self.canvas.delete("train")
+                self.train = self.canvas.create_oval(self.p, self.q, self.p + 10, self.q + 10, fill="red", tag='train')
+
     def draw_station_name(self):
         i = 0
         self.canvas.create_text(self.x-300, self.y-40, text="ET", font=('Times New Roman', 18, 'bold'))
@@ -544,14 +582,19 @@ class StationDesign(tk.Frame):
                 self.canvas.create_oval(x1, y1, x2, y2, outline="black")
     
     def update_train_location(self, data):
+        print('supdate_train_location run')
+        distance_travel = data['instent_distance']
+        next_station = list(filter(lambda x: x.get('name') == data['next_station']['name'], self.stations))[0]
+        train_px_move = distance_travel*next_station['px_per_km']
+        self.move_train_by_loc(train_px_move)
         # data will be 
         # data = {
         #     'next_station': {'name': 'Vidisha', 'lat': Decimal('23.522687'), 'lon': Decimal('77.815174'), 'order': 2, 'distance': 49.70376998384893}, 
         #     'curr_location': {'lat': Decimal('23.270723'), 'lon': Decimal('77.414528')}, 
         #     'speed': 0, 
-        #     'late_by': 0
+        #     'late_by': 0,
+        #     'instent_distance' : '1' in km
         # }
-        pass
 # if __name__ == "__main__":
 #     root = tk.Tk()
 #     app = HorizontalLineCircleDesignApp(root)
