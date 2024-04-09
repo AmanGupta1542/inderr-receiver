@@ -326,7 +326,8 @@ class StationDesign(tk.Frame):
 
         self.start_point = 5
         self.x = STATION_STRT_PX
-        self.y = int(self.screen_height/2)
+        # self.y = int(self.screen_height/2)
+        self.y = self.screen_height-100
         self.circle_radius = 5
         self.line_width = 150
         self.next_x = None
@@ -341,7 +342,7 @@ class StationDesign(tk.Frame):
 
     def add_key_value(self, station):
         self.total_stat_dis = (self.total_stat_dis + station['distance']) if station['distance'] else 0
-        station['total_distance'] = self.total_stat_dis
+        # station['total_distance'] = self.total_stat_dis
         station['px_per_km'] = DISTANCE_BW_ST_IN_PX/station['distance'] if station['distance'] else 0
         # print('mapped stations')
         # print(station)
@@ -434,9 +435,12 @@ class StationDesign(tk.Frame):
                 # self.draw_horizontal_line(x_coord+(self.circle_radius*2), self.y, self.line_width, tag=self.stations[ind]['abbr']+"_line")
                 # self.draw_circle(x_coord+self.circle_radius, self.y, self.circle_radius, tag=self.stations[ind]['abbr']+"_circle") # drawing a circle to represent station
                 self.station_points.append(x_coord)
-            self.canvas.create_text(x_coord, self.y+20, text=self.stations[ind]['abbr'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr'])
-            self.canvas.create_text(x_coord, self.y-20, text=self.stations[ind]['delay_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_dt")
-            self.canvas.create_text(x_coord, self.y-40, text=self.stations[ind]['estimate_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_et")
+            dx , dy = self.get_angle_calc(45)
+            self.create_polygon(x_coord+dx, (self.y-30)+dy, self.stations[ind]['name'], self.stations[ind]['abbr'])
+            # create stations name horizontally
+            # self.canvas.create_text(x_coord+dx, (self.y-30)+dy, text=self.stations[ind]['abbr'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr'], anchor="w", angle=45)
+            self.canvas.create_text(x_coord, self.y+20, text=self.stations[ind]['delay_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_dt")
+            self.canvas.create_text(x_coord, self.y+40, text=self.stations[ind]['estimate_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_et")
             
         
         total_leave_station = 0
@@ -546,17 +550,57 @@ class StationDesign(tk.Frame):
 
     def draw_station_name(self):
         i = 0
-        self.canvas.create_text(self.x-300, self.y-40, text="ET", font=('Times New Roman', 18, 'bold'))
-        self.canvas.create_text(self.x-300, self.y-20, text="DT", font=('Times New Roman', 18, 'bold'))
-        self.canvas.create_text(self.x-300, self.y+20, text="Station", font=('Times New Roman', 18, 'bold'))
+        self.canvas.create_text(self.x-300, self.y+40, text="ET", font=('Times New Roman', 18, 'bold'))
+        self.canvas.create_text(self.x-300, self.y+20, text="DT", font=('Times New Roman', 18, 'bold'))
+        self.canvas.create_text(self.x-300, self.y-30, text="Station", font=('Times New Roman', 18, 'bold'))
 
         for station in self.stations:
             # if station['order'] != len(self.stations):
             #     self.canvas.create_text((self.station_points[i]+self.station_points[i+1])/2, self.y+15, text=round((station['distance']-50), 1))
-            self.canvas.create_text(self.station_points[i], self.y+20, text=station['abbr'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr'])
-            self.canvas.create_text(self.station_points[i], self.y-20, text=f"{'End' if station['delay_time'] is None else station['delay_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_dt")
-            self.canvas.create_text(self.station_points[i], self.y-40, text=f"{'Start' if station['estimate_time'] is None else station['estimate_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_et")
+            
+            dx , dy = self.get_angle_calc(45)
+            self.create_polygon(self.station_points[i]+dx, (self.y-30)+dy, station['name'], station['abbr'])
+            # create stations name horizontally
+            # self.canvas.create_text(self.station_points[i]+dx, (self.y-30)+dy, text=station['name'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr'], angle=45)
+            self.canvas.create_text(self.station_points[i], self.y+20, text=f"{'End' if station['delay_time'] is None else station['delay_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_dt")
+            self.canvas.create_text(self.station_points[i], self.y+40, text=f"{'Start' if station['estimate_time'] is None else station['estimate_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_et")
             i+=1
+    
+    def get_angle_calc(self, angle):
+        radian_angle = math.radians(45)  # Convert degrees to radians
+        dx = 10 * math.cos(radian_angle)    # Change this value to adjust starting point offset
+        dy = 10 * math.sin(radian_angle)
+        return dx, dy
+    def calculate_values(self, l):
+        n = len(l)
+        middle_index = n // 2
+
+        result = []
+        for i in range(n):
+            diff = 20 * (i - middle_index)
+            if i < middle_index:
+                diff -= 20
+            elif i > middle_index:
+                diff += 20
+            result.append((l[i], diff))
+        
+        return result
+
+    def split_text_into_pairs(self, text):
+        words = text.split()
+        pairs = []
+        for i in range(0, len(words)-1, 2):
+            pairs.append(words[i] + " " + words[i+1])
+        if len(words) % 2 != 0:
+            pairs.append(words[-1])
+        return pairs
+
+    def create_polygon(self, x_coord, y_coord, station_name, tag):
+        split_text_list = self.split_text_into_pairs(station_name)
+        split_text_with_px = self.calculate_values(split_text_list)
+        for name_chunk in split_text_with_px:
+            self.canvas.create_text(x_coord+name_chunk[1], y_coord, text=name_chunk[0], angle=60, font=('Times New Roman', 15, 'bold'), anchor="w", justify=tk.LEFT, tags=tag)
+            # x_info += 25
 
 
     def draw_horizontal_line(self, x1, y1, length, tag=None, dash=None):

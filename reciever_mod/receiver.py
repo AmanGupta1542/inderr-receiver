@@ -24,12 +24,13 @@ SERVER_PORT = int(config('PORT',None))
 # print(deserialized_data)
 
 class Detail:
-    def __init__(self, data1, data2, stations, next_station, rem_distance=0):
+    def __init__(self, data1, data2, stations, next_station, total_dis_travel):
         ''' data will be in {'curr_location': 'lat': 23.455, 'lon': 33.223, 'datetime': datetime object} format'''
         # distance in km
         self.stations = stations
+        self.total_dis_travel = total_dis_travel
         self.next_station = next_station
-        self.instant_distance, self.rm_distance = self.haversine_distance(data1['curr_location']['lat'], data1['curr_location']['lon'], data2['curr_location']['lat'], data2['curr_location']['lon'], rem_distance)
+        self.instant_distance, self.rm_distance = self.haversine_distance(data1['curr_location']['lat'], data1['curr_location']['lon'], data2['curr_location']['lat'], data2['curr_location']['lon'])
         self.seconds = self.calc_time_diff(data1['datetime'], data2['datetime'])
         self.instant_speed = self.calc_speed()
         
@@ -38,7 +39,7 @@ class Detail:
         # To calculate total time store departure time and subtract it with current time stamp and convert return data in hours, 
         # then avg_speed = total_traveled_distance/total_time_taken
 
-    def haversine_distance(self, lat1, lon1, lat2, lon2, remain_dis):
+    def haversine_distance(self, lat1, lon1, lat2, lon2):
         # Convert Decimal values to float
         lat1, lon1, lat2, lon2 = map(float, [lat1, lon1, lat2, lon2])
 
@@ -55,8 +56,10 @@ class Detail:
 
         distance = R * c
         print('distance calculation done')
-        rm_distance = float(self.next_station['distance']) - (float(distance)+remain_dis)
-        print(rm_distance)
+        next_stat_total_dis = list(filter(lambda x: x.get('name') == self.next_station['name'], self.stations))[0]
+        rm_distance = float(next_stat_total_dis['total_distance']) - (float(distance)+self.total_dis_travel)
+        
+        print('remaining distance', rm_distance)
         return (distance,rm_distance)
     
     def calc_time_diff(self, start_time, end_time):
@@ -98,7 +101,7 @@ class Receiver:
         self.distance = 0
         self.seconds = 0
         self.instant_speed = 0
-        self.remaining_distance = 0
+        self.remaining_distance = None
         self.avg_speed = 0
         # self.root=Tk()
         # self.root.protocol("WM_DELETE_WINDOW", self.prevent_close)
@@ -175,7 +178,7 @@ class Receiver:
         remaining_distance = self.remaining_distance
         avg_speed = self.avg_speed # in kmph
         instent_speed = self.instant_speed # in kmph
-        time = remaining_distance/avg_speed # in hours
+        time = remaining_distance/instent_speed # in hours
         totaL_time_to_reach = datetime.now() + timedelta(hours=time)
         next_station = list(filter(lambda x: x.get('name') == self.recieved_data['next_station']['name'], self.recieved_data['stations']))[0]
         # convert next station arrived(estimate_time ) string in python datetime obj
@@ -232,7 +235,7 @@ class Receiver:
                 # store coordinates in second variable and perform calculatations
                 self.time_coord_2 = {'curr_location' :deserialized_data['curr_location'], 'datetime': datetime.now()} # {'curr_location': 'lat': 23.455, 'lon': 33.223, 'datetime': datetime object}
                 print('detail start')
-                detail = Detail(self.time_coord_1, self.time_coord_2, deserialized_data['stations'], deserialized_data['next_station'], self.remaining_distance)
+                detail = Detail(self.time_coord_1, self.time_coord_2, deserialized_data['stations'], deserialized_data['next_station'], self.distance)
                 print('detail end')
                 self.time_coord_1 = self.time_coord_2
 
@@ -255,7 +258,7 @@ class Receiver:
 
                 deserialized_data['speed'] = detail.instant_speed
                 deserialized_data['late_by'] = self.calc_late_by()
-                self.recieved_data['instent_distance'] = self.distance
+                self.recieved_data['instent_distance'] = detail.instant_distance
             print(deserialized_data)
             # text = data.decode()
             # deserialized_data = json.loads(text)

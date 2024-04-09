@@ -31,7 +31,7 @@ class DisplayDesign():
         self.footer_frame = Frame(self.root)
         # self.footer_frame = Frame(self.root, highlightbackground=HEADER_BG_COLOR, highlightthickness=HIGHLIGHTTHICKNESS, bg=HEADER_BG_COLOR)
         self.footer_frame.pack_propagate(False)
-        self.footer_frame.configure(width=self.WINDOW_WIDTH, height=200)
+        self.footer_frame.configure(width=self.WINDOW_WIDTH, height=400)
         self.body_frame = Frame(self.root)
         # self.body_frame = Frame(self.root, highlightbackground="blue", highlightthickness=HIGHLIGHTTHICKNESS)
         self.header_frame.pack()
