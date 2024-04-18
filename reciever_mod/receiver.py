@@ -15,13 +15,13 @@ from .constants import *
 
 SERVER_IP = config('IP',None)
 SERVER_PORT = int(config('PORT',None))
-# import pickle
+import pickle
 
-# data = b'\x80\x04\x95.\x06\x00\x00\x00\x00\x00\x00}\x94(\x8c\x05train\x94}\x94(\x8c\x04name\x94\x8c\x12Rajya Rani Express\x94\x8c\x06number\x94M\x91V\x8c\x0cfrom_station\x94\x8c\x0fBhopal Junction\x94\x8c\nto_station\x94\x8c\x05Damoh\x94u\x8c\x08stations\x94]\x94(}\x94(h\x03\x8c\x0fBhopal Junction\x94\x8c\x04abbr\x94\x8c\x03BPL\x94\x8c\x08distance\x94N\x8c\x05order\x94K\x01\x8c\restimate_time\x94N\x8c\ndelay_time\x94\x8c\x08datetime\x94\x8c\x04time\x94\x93\x94C\x06\x117\x00\x00\x00\x00\x94\x85\x94R\x94\x8c\x03lat\x94\x8c\x07decimal\x94\x8c\x07Decimal\x94\x93\x94\x8c\t23.266717\x94\x85\x94R\x94\x8c\x03lon\x94h\x1d\x8c\t77.412920\x94\x85\x94R\x94\x8c\thalt_time\x94Nu}\x94(h\x03\x8c\x07Vidisha\x94h\x0e\x8c\x03BHS\x94h\x10Nh\x11K\x02h\x12h\x16C\x06\x12 \x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x12"\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t23.522687\x94\x85\x94R\x94h!h\x1d\x8c\t77.815174\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x0bGanj Basoda\x94h\x0e\x8c\x03BAQ\x94h\x10Nh\x11K\x03h\x12h\x16C\x06\x13\x02\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x13\x03\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t23.846135\x94\x85\x94R\x94h!h\x1d\x8c\t77.944559\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x0cMandi Bamora\x94h\x0e\x8c\x04MABA\x94h\x10Nh\x11K\x04h\x12h\x16C\x06\x13\x1b\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x13\x1c\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t24.053588\x94\x85\x94R\x94h!h\x1d\x8c\t78.082580\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x04Bina\x94h\x0e\x8c\x04BINA\x94h\x10Nh\x11K\x05h\x12h\x16C\x06\x137\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x14\x00\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t24.172716\x94\x85\x94R\x94h!h\x1d\x8c\t78.184876\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x06Khurai\x94h\x0e\x8c\x03KYE\x94h\x10Nh\x11K\x06h\x12h\x16C\x06\x14\x1e\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x14 \x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t24.053327\x94\x85\x94R\x94h!h\x1d\x8c\t78.330431\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x06Saugor\x94h\x0e\x8c\x03SGO\x94h\x10Nh\x11K\x07h\x12h\x16C\x06\x15\x16\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x15\x19\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t23.847723\x94\x85\x94R\x94h!h\x1d\x8c\t78.744192\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x08Makronia\x94h\x0e\x8c\x04MKRN\x94h\x10Nh\x11K\x08h\x12h\x16C\x06\x15$\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x15&\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t23.866749\x94\x85\x94R\x94h!h\x1d\x8c\t78.809547\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\nGaneshganj\x94h\x0e\x8c\x03GAJ\x94h\x10Nh\x11K\th\x12h\x16C\x06\x16\x03\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x16\x05\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t23.895494\x94\x85\x94R\x94h!h\x1d\x8c\t79.073202\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x08Patharia\x94h\x0e\x8c\x03PHA\x94h\x10Nh\x11K\nh\x12h\x16C\x06\x16\x12\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x16\x14\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t23.905831\x94\x85\x94R\x94h!h\x1d\x8c\t79.192505\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x05Damoh\x94h\x0e\x8c\x03DMO\x94h\x10Nh\x11K\x0bh\x12h\x16C\x06\x16-\x00\x00\x00\x00\x94\x85\x94R\x94h\x13Nh\x1ah\x1d\x8c\t23.835631\x94\x85\x94R\x94h!h\x1d\x8c\t79.431790\x94\x85\x94R\x94h%K\x02ue\x8c\x0cnext_station\x94}\x94(h\x03\x8c\x06Saugor\x94h\x1ah\x1d\x8c\t23.847723\x94\x85\x94R\x94h!h\x1d\x8c\t78.744192\x94\x85\x94R\x94h\x11K\x07h\x10G@\x07Z\x1bZ5wAu\x8c\rcurr_location\x94}\x94(h\x1ah\x1d\x8c\t23.846099\x94\x85\x94R\x94h!h\x1d\x8c\t78.738281\x94\x85\x94R\x94u\x8c\x05speed\x94K\x00\x8c\x07late_by\x94K\x00u.'
+data = b'\x80\x04\x95.\x06\x00\x00\x00\x00\x00\x00}\x94(\x8c\x05train\x94}\x94(\x8c\x04name\x94\x8c\x12Rajya Rani Express\x94\x8c\x06number\x94M\x91V\x8c\x0cfrom_station\x94\x8c\x0fBhopal Junction\x94\x8c\nto_station\x94\x8c\x05Damoh\x94u\x8c\x08stations\x94]\x94(}\x94(h\x03\x8c\x0fBhopal Junction\x94\x8c\x04abbr\x94\x8c\x03BPL\x94\x8c\x08distance\x94N\x8c\x05order\x94K\x01\x8c\restimate_time\x94N\x8c\ndelay_time\x94\x8c\x08datetime\x94\x8c\x04time\x94\x93\x94C\x06\x117\x00\x00\x00\x00\x94\x85\x94R\x94\x8c\x03lat\x94\x8c\x07decimal\x94\x8c\x07Decimal\x94\x93\x94\x8c\t23.266717\x94\x85\x94R\x94\x8c\x03lon\x94h\x1d\x8c\t77.412920\x94\x85\x94R\x94\x8c\thalt_time\x94Nu}\x94(h\x03\x8c\x07Vidisha\x94h\x0e\x8c\x03BHS\x94h\x10Nh\x11K\x02h\x12h\x16C\x06\x12 \x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x12"\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t23.522687\x94\x85\x94R\x94h!h\x1d\x8c\t77.815174\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x0bGanj Basoda\x94h\x0e\x8c\x03BAQ\x94h\x10Nh\x11K\x03h\x12h\x16C\x06\x13\x02\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x13\x03\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t23.846135\x94\x85\x94R\x94h!h\x1d\x8c\t77.944559\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x0cMandi Bamora\x94h\x0e\x8c\x04MABA\x94h\x10Nh\x11K\x04h\x12h\x16C\x06\x13\x1b\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x13\x1c\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t24.053588\x94\x85\x94R\x94h!h\x1d\x8c\t78.082580\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x04Bina\x94h\x0e\x8c\x04BINA\x94h\x10Nh\x11K\x05h\x12h\x16C\x06\x137\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x14\x00\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t24.172716\x94\x85\x94R\x94h!h\x1d\x8c\t78.184876\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x06Khurai\x94h\x0e\x8c\x03KYE\x94h\x10Nh\x11K\x06h\x12h\x16C\x06\x14\x1e\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x14 \x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t24.053327\x94\x85\x94R\x94h!h\x1d\x8c\t78.330431\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x06Saugor\x94h\x0e\x8c\x03SGO\x94h\x10Nh\x11K\x07h\x12h\x16C\x06\x15\x16\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x15\x19\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t23.847723\x94\x85\x94R\x94h!h\x1d\x8c\t78.744192\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x08Makronia\x94h\x0e\x8c\x04MKRN\x94h\x10Nh\x11K\x08h\x12h\x16C\x06\x15$\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x15&\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t23.866749\x94\x85\x94R\x94h!h\x1d\x8c\t78.809547\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\nGaneshganj\x94h\x0e\x8c\x03GAJ\x94h\x10Nh\x11K\th\x12h\x16C\x06\x16\x03\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x16\x05\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t23.895494\x94\x85\x94R\x94h!h\x1d\x8c\t79.073202\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x08Patharia\x94h\x0e\x8c\x03PHA\x94h\x10Nh\x11K\nh\x12h\x16C\x06\x16\x12\x00\x00\x00\x00\x94\x85\x94R\x94h\x13h\x16C\x06\x16\x14\x00\x00\x00\x00\x94\x85\x94R\x94h\x1ah\x1d\x8c\t23.905831\x94\x85\x94R\x94h!h\x1d\x8c\t79.192505\x94\x85\x94R\x94h%K\x02u}\x94(h\x03\x8c\x05Damoh\x94h\x0e\x8c\x03DMO\x94h\x10Nh\x11K\x0bh\x12h\x16C\x06\x16-\x00\x00\x00\x00\x94\x85\x94R\x94h\x13Nh\x1ah\x1d\x8c\t23.835631\x94\x85\x94R\x94h!h\x1d\x8c\t79.431790\x94\x85\x94R\x94h%K\x02ue\x8c\x0cnext_station\x94}\x94(h\x03\x8c\x06Saugor\x94h\x1ah\x1d\x8c\t23.847723\x94\x85\x94R\x94h!h\x1d\x8c\t78.744192\x94\x85\x94R\x94h\x11K\x07h\x10G@\x07Z\x1bZ5wAu\x8c\rcurr_location\x94}\x94(h\x1ah\x1d\x8c\t23.846099\x94\x85\x94R\x94h!h\x1d\x8c\t78.738281\x94\x85\x94R\x94u\x8c\x05speed\x94K\x00\x8c\x07late_by\x94K\x00u.'
 
-# deserialized_data = pickle.loads(data)
+deserialized_data = pickle.loads(data)
 
-# print(deserialized_data)
+print(deserialized_data)
 
 class Detail:
     def __init__(self, data1, data2, stations, next_station, total_dis_travel):
@@ -57,8 +57,8 @@ class Detail:
         distance = R * c
         print('distance calculation done')
         next_stat_total_dis = list(filter(lambda x: x.get('name') == self.next_station['name'], self.stations))[0]
+        print(next_stat_total_dis)
         rm_distance = float(next_stat_total_dis['total_distance']) - (float(distance)+self.total_dis_travel)
-        
         print('remaining distance', rm_distance)
         return (distance,rm_distance)
     
@@ -85,7 +85,12 @@ class Detail:
 
 class Receiver:
     fps = 80
+    stations = None
+    train = None
     def __init__(self, text_var=''):
+        self.socket_timeout = 10
+        self.socket_default_timeout = None
+        self.ack_complete = False
         self.time_coord_1 = None
         self.time_coord_2 = None
         self.recieved_data = None
@@ -195,6 +200,8 @@ class Receiver:
 
         # Create a socket object
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket_default_timeout = server_socket.gettimeout()
+        server_socket.settimeout(self.socket_timeout)
 
         try:
             # Bind the socket to the server address and port
@@ -205,37 +212,55 @@ class Receiver:
 
         # Listen for incoming connections
         server_socket.listen(1)
-
-        print(f"Listening on {SERVER_IP}:{SERVER_PORT}")
-
-        # Accept a connection from a client
-        client_socket, client_address = server_socket.accept()
-
-        # Receive and print data from the client
-        received_data = b''
-        print('while start')
-        # while True:
-        #     # print(received_data)
-        #     chunk = client_socket.recv(4096)
-        #     if not chunk:
-        #         break
-        #     received_data+=chunk
+        
         try:
+
+            print(f"Listening on {SERVER_IP}:{SERVER_PORT}")
+
+            # Accept a connection from a client
+            client_socket, client_address = server_socket.accept()
+
+            # Receive and print data from the client
+            received_data = b''
+            print('while start')
+            # while True:
+            #     # print(received_data)
+            #     chunk = client_socket.recv(4096)
+            #     if not chunk:
+            #         break
+            #     received_data+=chunk
             data = client_socket.recv(4096)
             # timestamp
             # text_var = data.decode('utf-8')
             print('while end')
             deserialized_data = pickle.loads(data)
             self.recieved_data = deserialized_data
+            if not self.ack_complete:
+                if deserialized_data['get_ack']:
+                    self.socket_timeout = self.socket_default_timeout
+                    print('timeout reset to ', self.socket_timeout)
+                    self.ack_complete = True
+                else:
+                    print('given timeout ', self.socket_timeout)
             if(self.time_coord_1 is None):
                 print("time_coord_1 is none")
+                Receiver.stations = deserialized_data['stations']
+                Receiver.train = deserialized_data['train']
                 self.time_coord_1 = {'curr_location' :deserialized_data['curr_location'], 'datetime': datetime.now()} # {'curr_location': 'lat': 23.455, 'lon': 33.223, 'datetime': datetime object}
             else :
                 print("time_coord_1 is not none")
+                if Receiver.stations is not None:
+                    deserialized_data['stations'] = Receiver.stations
+                else: 
+                    Receiver.stations = deserialized_data['stations']
+                if Receiver.train is not None:
+                    deserialized_data['train'] = Receiver.train
+                else:
+                    Receiver.train = deserialized_data['train']
                 # store coordinates in second variable and perform calculatations
                 self.time_coord_2 = {'curr_location' :deserialized_data['curr_location'], 'datetime': datetime.now()} # {'curr_location': 'lat': 23.455, 'lon': 33.223, 'datetime': datetime object}
                 print('detail start')
-                detail = Detail(self.time_coord_1, self.time_coord_2, deserialized_data['stations'], deserialized_data['next_station'], self.distance)
+                detail = Detail(self.time_coord_1, self.time_coord_2, Receiver.stations, deserialized_data['next_station'], self.distance)
                 print('detail end')
                 self.time_coord_1 = self.time_coord_2
 
@@ -277,6 +302,9 @@ class Receiver:
             if self.station_initialized:
                 print('Updatinig Display Window')
                 self.dd.update_data(self.recieved_data)
+            client_socket.sendall("ACK".encode())
+                
+                                                        
             # header_label1 = Label(self.root, text='The next Station is',font=('Times New Roman',30,'bold'), bg='blue', fg='white')
             # header_label1.place(relx=0.5, rely=0.4, anchor='center')
             # header_label2 = Label(self.root, text=text_var[20:],font=('Times New Roman',40,'bold'), bg='blue', fg='yellow')
@@ -290,8 +318,14 @@ class Receiver:
             # tk_window(text_var)
         except pickle.UnpicklingError as e:
             print("Error occur while unpickling : ", e)
-        # except Exception as e:
-            # print("An unknown error occur : ", e)
+            
+        except socket.timeout:
+            print('timeout')
+            
+        except socket.error as e:
+            print('socket error : ',e)
+        #except Exception as e:
+            #print("An unknown error occur : ", e)
 
     def recieve_loop(self):
         while True:
