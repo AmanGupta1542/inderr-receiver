@@ -246,44 +246,37 @@ class Receiver:
                 print("time_coord_1 is none")
                 Receiver.stations = deserialized_data['stations']
                 Receiver.train = deserialized_data['train']
-                self.time_coord_1 = {'curr_location' :deserialized_data['curr_location'], 'datetime': datetime.now()} # {'curr_location': 'lat': 23.455, 'lon': 33.223, 'datetime': datetime object}
+                self.time_coord_1 = 'stable'
+                # self.time_coord_1 = {'curr_location' :deserialized_data['curr_location'], 'datetime': datetime.now()} # {'curr_location': 'lat': 23.455, 'lon': 33.223, 'datetime': datetime object}
             else :
                 print("time_coord_1 is not none")
-                if Receiver.stations is not None:
-                    deserialized_data['stations'] = Receiver.stations
-                else: 
-                    Receiver.stations = deserialized_data['stations']
-                if Receiver.train is not None:
-                    deserialized_data['train'] = Receiver.train
-                else:
-                    Receiver.train = deserialized_data['train']
                 # store coordinates in second variable and perform calculatations
-                self.time_coord_2 = {'curr_location' :deserialized_data['curr_location'], 'datetime': datetime.now()} # {'curr_location': 'lat': 23.455, 'lon': 33.223, 'datetime': datetime object}
+                # self.time_coord_2 = {'curr_location' :deserialized_data['curr_location'], 'datetime': datetime.now()} # {'curr_location': 'lat': 23.455, 'lon': 33.223, 'datetime': datetime object}
                 print('detail start')
-                detail = Detail(self.time_coord_1, self.time_coord_2, Receiver.stations, deserialized_data['next_station'], self.distance)
+                # detail = Detail(self.time_coord_1, self.time_coord_2, Receiver.stations, deserialized_data['next_station'], self.distance)
                 print('detail end')
-                self.time_coord_1 = self.time_coord_2
+                # self.time_coord_1 = self.time_coord_2
 
-                self.distance += detail.instant_distance # in km
-                self.seconds += detail.seconds # in seconds
-                self.instant_speed = detail.instant_speed
+                # self.distance += detail.instant_distance # in km
+                # self.seconds += detail.seconds # in seconds
+                # self.instant_speed = detail.instant_speed
                 print('detail end1')
-                self.remaining_distance = detail.rm_distance
+                # self.remaining_distance = detail.rm_distance
                 print('detail end2')
 
-                self.avg_speed = self.distance / (self.seconds/3600)
+                # self.avg_speed = self.distance / (self.seconds/3600)
 
-                print("***************  DATA START  ***************")
-                print("Total Distance", self.distance)
-                print("Total Seconds", self.seconds)
-                print("Instance Speed", self.instant_speed)
-                print("Remaining Distance", self.remaining_distance)
-                print("Average Speed", self.avg_speed)
-                print("***************  DATA END  ***************")
+                # print("***************  DATA START  ***************")
+                # print("Total Distance", self.distance)
+                # print("Total Seconds", self.seconds)
+                # print("Instance Speed", self.instant_speed)
+                # print("Remaining Distance", self.remaining_distance)
+                # print("Average Speed", self.avg_speed)
+                # print("***************  DATA END  ***************")
 
-                deserialized_data['speed'] = detail.instant_speed
-                deserialized_data['late_by'] = self.calc_late_by()
-                self.recieved_data['instent_distance'] = detail.instant_distance
+                # deserialized_data['speed'] = detail.instant_speed
+                # deserialized_data['late_by'] = self.calc_late_by()
+                # self.recieved_data['instent_distance'] = detail.instant_distance
             print(deserialized_data)
             # text = data.decode()
             # deserialized_data = json.loads(text)

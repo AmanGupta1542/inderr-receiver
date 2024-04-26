@@ -11,7 +11,7 @@ STATIONS0 = [
         'raw_distance': 53.4,
         'order': 1,
         'estimate_time': 'Start',
-        'delay_time': '-'
+        'depart_time': '-'
     },
     {
         'name': 'Vidisha',
@@ -20,7 +20,7 @@ STATIONS0 = [
         'raw_distance': 39.5,
         'order':2,
         'estimate_time': '6:32 p.m.',
-        'delay_time': '-'
+        'depart_time': '-'
     },
     {
         'name': 'Ganj Basoda',
@@ -29,7 +29,7 @@ STATIONS0 = [
         'raw_distance': 28.4,
         'order':3,
         'estimate_time': '7:02 p.m.',
-        'delay_time': '-'
+        'depart_time': '-'
     },
     {
         'name': 'Mandi Bamora',
@@ -38,7 +38,7 @@ STATIONS0 = [
         'raw_distance': 17.4,
         'order':4,
         'estimate_time': '7:27 p.m.',
-        'delay_time': '-'
+        'depart_time': '-'
     },
     {
         'name': 'Bina',
@@ -47,7 +47,7 @@ STATIONS0 = [
         'raw_distance': 21.7,
         'order':5,
         'estimate_time': '7:55 p.m.',
-        'delay_time': '-'
+        'depart_time': '-'
     },
     {
         'name': 'Khurai',
@@ -56,7 +56,7 @@ STATIONS0 = [
         'raw_distance': 52.8,
         'order':6,
         'estimate_time': '8:30 p.m.',
-        'delay_time': '-'
+        'depart_time': '-'
     },
     {
         'name': 'Saugor',
@@ -65,7 +65,7 @@ STATIONS0 = [
         'raw_distance': 7.1,
         'order':7,
         'estimate_time': '9:22 p.m.',
-        'delay_time': '-'
+        'depart_time': '-'
     },
     {
         'name': 'Makronia',
@@ -74,7 +74,7 @@ STATIONS0 = [
         'raw_distance': 31,
         'order':8,
         'estimate_time': '9:36 p.m.',
-        'delay_time': '-'
+        'depart_time': '-'
     },
     {
         'name': 'Ganeshganj',
@@ -83,7 +83,7 @@ STATIONS0 = [
         'raw_distance': 12.9,
         'order':9,
         'estimate_time': '10:03 p.m.',
-        'delay_time': '-'
+        'depart_time': '-'
     },
     {
         'name': 'Patharia',
@@ -92,7 +92,7 @@ STATIONS0 = [
         'raw_distance': 26.1,
         'order':10,
         'estimate_time': '10:18 p.m.',
-        'delay_time': '-'
+        'depart_time': '-'
     },
     {
         'name': 'Damoh',
@@ -101,14 +101,14 @@ STATIONS0 = [
         'raw_distance': 0,
         'order':11,
         'estimate_time': '10:45 p.m.',
-        'delay_time': '-'
+        'depart_time': '-'
     }
 ]
 STATIONS1 = [
     {
         'name': 'station 1',
         'abbr': 'stat',
-        'delay_time': '-',
+        'depart_time': '-',
         'estimate_time': '12:00AM',
         'raw_distance': 100.0,
         'order': 1
@@ -343,7 +343,7 @@ class StationDesign(tk.Frame):
     def add_key_value(self, station):
         self.total_stat_dis = (self.total_stat_dis + station['distance']) if station['distance'] else 0
         # station['total_distance'] = self.total_stat_dis
-        station['px_per_km'] = DISTANCE_BW_ST_IN_PX/station['distance'] if station['distance'] else 0
+        station['px_per_km'] = round(DISTANCE_BW_ST_IN_PX/station['distance'], 1) if station['distance'] else 0
         # print('mapped stations')
         # print(station)
         return station
@@ -435,11 +435,14 @@ class StationDesign(tk.Frame):
                 # self.draw_horizontal_line(x_coord+(self.circle_radius*2), self.y, self.line_width, tag=self.stations[ind]['abbr']+"_line")
                 # self.draw_circle(x_coord+self.circle_radius, self.y, self.circle_radius, tag=self.stations[ind]['abbr']+"_circle") # drawing a circle to represent station
                 self.station_points.append(x_coord)
+            # self.canvas.create_text(x_coord, self.y+20, text=self.stations[ind]['abbr'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr'])
+            # self.canvas.create_text(x_coord, self.y-20, text=self.stations[ind]['depart_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_dt")
+            # self.canvas.create_text(x_coord, self.y-40, text=self.stations[ind]['estimate_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_et")
             dx , dy = self.get_angle_calc(45)
             self.create_polygon(x_coord+dx, (self.y-30)+dy, self.stations[ind]['name'], self.stations[ind]['abbr'])
             # create stations name horizontally
             # self.canvas.create_text(x_coord+dx, (self.y-30)+dy, text=self.stations[ind]['abbr'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr'], anchor="w", angle=45)
-            self.canvas.create_text(x_coord, self.y+20, text=self.stations[ind]['delay_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_dt")
+            self.canvas.create_text(x_coord, self.y+20, text=self.stations[ind]['depart_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_dt")
             self.canvas.create_text(x_coord, self.y+40, text=self.stations[ind]['estimate_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_et")
             
         
@@ -522,12 +525,13 @@ class StationDesign(tk.Frame):
             if move_train_forward:
                 self.canvas.after(1, self.move_train) # increase value to slow dot move speed
 
-    def move_train_by_loc(self, train_px_move):
+    def move_train_by_loc(self, train_px_move, prev_stat_x_coord):
         print('move station by loc 1')
+        print('prev_stat_x_coord', prev_stat_x_coord)
         if(self.p != self.next_x):
             # print(self.p, self.next_x)
             print('move station by loc 2')
-            self.p += train_px_move
+            self.p = prev_stat_x_coord + train_px_move
             self.p = round(self.p, 1)
             # self.q += 1
             # print(self.p)
@@ -550,22 +554,24 @@ class StationDesign(tk.Frame):
 
     def draw_station_name(self):
         i = 0
-        self.canvas.create_text(self.x-300, self.y+40, text="ET", font=('Times New Roman', 18, 'bold'))
-        self.canvas.create_text(self.x-300, self.y+20, text="DT", font=('Times New Roman', 18, 'bold'))
+        self.canvas.create_text(self.x-300, self.y+40, text="ETA", font=('Times New Roman', 18, 'bold'))
+        self.canvas.create_text(self.x-300, self.y+20, text="ATA", font=('Times New Roman', 18, 'bold'))
         self.canvas.create_text(self.x-300, self.y-30, text="Station", font=('Times New Roman', 18, 'bold'))
 
         for station in self.stations:
             # if station['order'] != len(self.stations):
             #     self.canvas.create_text((self.station_points[i]+self.station_points[i+1])/2, self.y+15, text=round((station['distance']-50), 1))
-            
+            # self.canvas.create_text(self.station_points[i], self.y+20, text=station['abbr'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr'])
+            # self.canvas.create_text(self.station_points[i], self.y-20, text=f"{'End' if station['depart_time'] is None else station['depart_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_dt")
+            # self.canvas.create_text(self.station_points[i], self.y-40, text=f"{'Start' if station['estimate_time'] is None else station['estimate_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_et")
             dx , dy = self.get_angle_calc(45)
             self.create_polygon(self.station_points[i]+dx, (self.y-30)+dy, station['name'], station['abbr'])
             # create stations name horizontally
             # self.canvas.create_text(self.station_points[i]+dx, (self.y-30)+dy, text=station['name'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr'], angle=45)
-            self.canvas.create_text(self.station_points[i], self.y+20, text=f"{'End' if station['delay_time'] is None else station['delay_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_dt")
+            self.canvas.create_text(self.station_points[i], self.y+20, text=f"{'End' if station['depart_time'] is None else station['depart_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_dt")
             self.canvas.create_text(self.station_points[i], self.y+40, text=f"{'Start' if station['estimate_time'] is None else station['estimate_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_et")
             i+=1
-    
+            
     def get_angle_calc(self, angle):
         radian_angle = math.radians(45)  # Convert degrees to radians
         dx = 10 * math.cos(radian_angle)    # Change this value to adjust starting point offset
@@ -583,7 +589,7 @@ class StationDesign(tk.Frame):
             elif i > middle_index:
                 diff += 20
             result.append((l[i], diff))
-        
+
         return result
 
     def split_text_into_pairs(self, text):
@@ -627,10 +633,26 @@ class StationDesign(tk.Frame):
     
     def update_train_location(self, data):
         print('supdate_train_location run')
-        distance_travel = data['instent_distance']
+        distance_travel = data['next_station']['instant_distance']
+        print('getting instant distance', data['next_station']['instant_distance'])
+        
         next_station = list(filter(lambda x: x.get('name') == data['next_station']['name'], self.stations))[0]
-        train_px_move = distance_travel*next_station['px_per_km']
-        self.move_train_by_loc(train_px_move)
+        stat_km_per_px = round(next_station['px_per_km'], 1)
+        print('next stations px per km', stat_km_per_px)
+        
+        train_px_move = round(distance_travel*stat_km_per_px, 1)
+        # other logic
+        stat_dis = data['next_station']['distance']
+        print('station distance', stat_dis)
+        remain_dis = data['next_station']['remaining_distance']
+        print('remaining dis', remain_dis)
+        dis_travel = round(stat_dis - remain_dis, 2)
+        print('distance travel', dis_travel)
+        train_px_move = round(dis_travel * stat_km_per_px, 1)
+        print('train move px', train_px_move)
+        prev_station = list(filter(lambda x: x.get('order') == int(next_station['order'])-1, self.stations))[0]
+        print(prev_station)
+        self.move_train_by_loc(train_px_move, prev_station['x_coord'])
         # data will be 
         # data = {
         #     'next_station': {'name': 'Vidisha', 'lat': Decimal('23.522687'), 'lon': Decimal('77.815174'), 'order': 2, 'distance': 49.70376998384893}, 

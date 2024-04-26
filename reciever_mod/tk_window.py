@@ -68,7 +68,7 @@ class DisplayDesign():
         canvas = Canvas(self.header_frame, bg=HEADER_BG_COLOR, bd=0, highlightthickness=0, relief='ridge')
         canvas.pack(fill=BOTH, expand=1)
 
-        text_var = "Welcome to Indian Railway"
+        text_var = "Welcome to the Indian Railways"
         text = canvas.create_text(0, 25, text=text_var, font=('Times New Roman', 30, 'bold'), fill=HEADER_TEXT_COLOR, tags=("marquee",), anchor='w')
 
         x1, y1, x2, y2 = canvas.bbox("marquee")
@@ -98,10 +98,10 @@ class DisplayDesign():
         self.t1 = Frame(self.data_right_frame, highlightbackground=BODY_TABLE_BOARDER_COLOR, highlightthickness=HIGHLIGHTTHICKNESS)
         self.t1.pack(fill=BOTH, expand =1)
         self.speed_l = Label(self.t1, text=f"Speed ", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
-        self.speed_l.pack(side = LEFT)
+        self.speed_l.pack(side = LEFT, padx=10)
 
         self.speed_r = Label(self.t1, text=f"{self.data_dict['speed']}", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
-        self.speed_r.pack(side = RIGHT)
+        self.speed_r.pack(side = RIGHT, padx=10)
         
 
         ################################
@@ -109,10 +109,10 @@ class DisplayDesign():
         self.t2 = Frame(self.data_right_frame, highlightbackground=BODY_TABLE_BOARDER_COLOR, highlightthickness=HIGHLIGHTTHICKNESS)
         self.t2.pack(fill=BOTH, expand =1)
         self.time_l = Label(self.t2, text=f"Time ", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
-        self.time_l.pack(side = LEFT)
+        self.time_l.pack(side = LEFT, padx=10)
 
         self.time_r = Label(self.t2, font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
-        self.time_r.pack(side = RIGHT)
+        self.time_r.pack(side = RIGHT, padx=10)
         
         def update_time():
             now = strftime("%H:%M:%S")
@@ -129,7 +129,7 @@ class DisplayDesign():
 
         
         self.late = Label(self.data_right_frame, text=f"Late by {self.data_dict['late_by']}", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
-        self.late.pack(fill=BOTH,side = LEFT)
+        self.late.pack(fill=BOTH,side = LEFT, padx=10)
         # frame = Frame(self.data_right_frame, height=100,width=150,bg="black")
         # frame.pack()
 
@@ -147,17 +147,25 @@ class DisplayDesign():
 
     def update_data(self, data):
         self.data_dict = data
-        try:
-            print('station_obj : is none')
-            if self.station_obj is not None:
-                print('station object created')
-                self.w2.config(text=data['next_station']['name'])
-                self.speed_r.config(text=round(data['speed'], 0))
-                late_by_txt = 'Early By '+str(round(data['late_by'], 2))+ 'minutes' if data['late_by'] < 0 else 'Late By '+str(round(data['late_by'], 2))+ 'minutes'
-                self.late.config(text=late_by_txt)
-                self.station_obj.update_train_location(data)
-        except Exception as e:
-            print(e)
+        # try:
+        print('station_obj : is none')
+        if self.station_obj is not None:
+            print('station object created')
+            self.w2.config(text=data['next_station']['name'])
+            inst_speed = round(data['next_station']['instant_speed'], 2)
+            inst_speed_str = str(inst_speed)+" km/h"
+            self.speed_r.config(text=inst_speed_str)
+            # late_by_txt = 'Early By '+str(round(data['late_by'], 2))+ 'minutes' if data['late_by'] < 0 else 'Late By '+str(round(data['late_by'], 2))+ 'minutes'
+            late_stat = data['next_station']['late_by']
+            self.late.config(text=late_stat)
+            if 'late' in late_stat.lower():
+                color = 'red'
+            else:
+                color = 'blue'
+            self.late.config(fg=color)
+            self.station_obj.update_train_location(data)
+        # except Exception as e:
+            # print(e)
 
 
 # if __name__ == "__main__":
