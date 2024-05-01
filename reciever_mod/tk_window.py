@@ -90,7 +90,7 @@ class DisplayDesign():
         self.data_right_frame.configure(width=self.WINDOW_WIDTH/2, height=200)
         self.data_right_frame.pack(side = LEFT)
 
-        self.w1 = Label(self.data_left_frame, text="The next stations is", font=(FONT_TYPE, 30, 'bold'))
+        self.w1 = Label(self.data_left_frame, text="The next station is", font=(FONT_TYPE, 30, 'bold'))
         self.w1.pack()
         self.w2 = Label(self.data_left_frame, text=self.data_dict['next_station']['name'], font=(FONT_TYPE, 30, 'bold'))
         self.w2.pack()
@@ -163,7 +163,7 @@ class DisplayDesign():
             else:
                 color = 'blue'
             self.late.config(fg=color)
-            self.station_obj.update_train_location(data)
+            self.station_obj.update_train_location(data, color)
         # except Exception as e:
             # print(e)
 

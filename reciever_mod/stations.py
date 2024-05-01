@@ -2,6 +2,7 @@ import tkinter as tk
 import time
 from .constants import *
 import math
+from datetime import datetime, timedelta
 
 STATIONS0 = [
     {
@@ -363,6 +364,7 @@ class StationDesign(tk.Frame):
                 
             elif station['order'] == len(self.stations):
                 # self.draw_circle(self.x+self.circle_radius+self.line_width+self.circle_radius, self.y, self.circle_radius)
+                print('last station x coords', self.next_x+self.circle_radius)
                 self.draw_circle(self.next_x+self.circle_radius, self.y, self.circle_radius, tag=station['abbr']+"_circle") # drawing a circle to represent station
                 self.station_points.append(self.next_x)
                 station['x_coord'] = self.next_x
@@ -375,6 +377,7 @@ class StationDesign(tk.Frame):
                 self.draw_horizontal_line(self.next_x+(self.circle_radius*2), self.y, self.line_width, tag=station['abbr']+"_line")
                 self.next_x = self.next_x+(self.circle_radius*2)+self.line_width
         print(self.next_x)
+        print("#################################################")
         print(self.station_points)
         print(self.stations)
         for i in range(len(self.station_points)):
@@ -407,11 +410,26 @@ class StationDesign(tk.Frame):
         self.canvas.delete("train")
         remove_stat_points = self.station_capacity - 1 if self.shift_call == 0 else self.station_capacity - 2 # station_capacity -1 = 5-1
         print(remove_stat_points)
+        print('old stations data')
+        print(self.stations)
+        # update x_coord of stations
+        update_index_from = (self.shift_call * remove_stat_points) + (self.station_capacity - 1)
+        print('update_index_from', update_index_from)
+        count = 0
+        for i in range(len(self.stations)):
+            if i >= update_index_from:
+                print(count)
+                if count == (self.station_capacity - 1): break
+                self.stations[i]['x_coord'] = self.station_points[1+count]
+                count += 1
+        print('new stations data')
+        print(self.stations)
         print('old',self.station_points)
         if(len(self.station_points)> self.station_capacity-1):
             for i in range(remove_stat_points):
                 print(i)
                 self.station_points.pop()
+        
         print('new',self.station_points)
         cond = (self.shift_call*(self.station_capacity-2))
         for i in range((self.shift_call*(self.station_capacity-2)) +1 , cond+self.station_capacity):
@@ -484,12 +502,16 @@ class StationDesign(tk.Frame):
             if len(self.stations) > self.station_capacity:
                 if self.ind+1 == len(self.stations):
                     print('Reach Destination')
+                    self.canvas.delete("train")
+                    self.train = self.canvas.create_oval(self.p, self.q, self.p + 10, self.q + 10, fill="red", tag='train')
                     return False
                 else:
                     self.shift_stations_left(current_station_index)
                     return True
             else:
                 print('Reach Destination')
+                self.canvas.delete("train")
+                self.train = self.canvas.create_oval(self.p, self.q, self.p + 10, self.q + 10, fill="red", tag='train')
                 return False
         else:
             next_station_x_y = self.station_points[current_station_index+1]
@@ -631,8 +653,27 @@ class StationDesign(tk.Frame):
             else:
                 self.canvas.create_oval(x1, y1, x2, y2, outline="black")
     
-    def update_train_location(self, data):
+    def update_train_rech_depart_time(self, next_station, late_by_color):
+        print(next_station['totaL_time_to_reach'])
+        exp_reachin_time = datetime.strptime(next_station['totaL_time_to_reach'], "%Y-%m-%dT%H:%M:%S.%f")
+        new_reaching_time = exp_reachin_time.strftime("%H:%M")
+        new_depart_time = (exp_reachin_time + timedelta(minutes=int(next_station['halt_time']))).strftime("%H:%M")
+        print('Expected reaching time', exp_reachin_time.strftime("%m-%d-%Y %H:%M:%S"))
+        print('Expected departure time', (exp_reachin_time + timedelta(minutes=int(next_station['halt_time']))).strftime("%m-%d-%Y %H:%M:%S"))
+        
+        self.canvas.delete(next_station['abbr']+"_dt")
+        self.canvas.delete(next_station['abbr']+"_et")
+        
+        dx , dy = self.get_angle_calc(45)
+        next_station_by_self = list(filter(lambda x: x.get('name') == next_station['name'], self.stations))[0]
+        x_coord = next_station_by_self['x_coord']
+        self.canvas.create_text(x_coord, self.y+20, text=new_depart_time, font=('Times New Roman', 15, 'bold'), fill=late_by_color, tags=next_station['abbr']+"_dt")
+        self.canvas.create_text(x_coord, self.y+40, text=new_reaching_time, font=('Times New Roman', 15, 'bold'), fill=late_by_color, tags=next_station['abbr']+"_et")
+        
+        
+    def update_train_location(self, data, late_by_color):
         print('supdate_train_location run')
+        self.update_train_rech_depart_time(data['next_station'], late_by_color)
         distance_travel = data['next_station']['instant_distance']
         print('getting instant distance', data['next_station']['instant_distance'])
         
@@ -652,7 +693,26 @@ class StationDesign(tk.Frame):
         print('train move px', train_px_move)
         prev_station = list(filter(lambda x: x.get('order') == int(next_station['order'])-1, self.stations))[0]
         print(prev_station)
-        self.move_train_by_loc(train_px_move, prev_station['x_coord'])
+        if data['next_station']['instant_speed'] == 0:
+            pass
+        else:
+            if remain_dis <= 1:
+                add_radius = self.circle_radius if prev_station['order'] == 1 else (self.circle_radius*2)
+                self.move_train_by_loc(DISTANCE_BW_ST_IN_PX+(add_radius), prev_station['x_coord'])
+                print("************************************************************")
+                print('Remaining distance is less then one,', DISTANCE_BW_ST_IN_PX+(add_radius), prev_station['x_coord'])
+            elif remain_dis >=  (data['next_station']['distance'] - 1):
+                print("************************************************************")
+                print("Train Departed")
+                # checking if station is start station
+                # if int(prev_station['order']) == 1:
+                #     pass
+                # else:
+                #     pass
+                # mark departure time
+                # self.move_train_by_loc(0, prev_station['x_coord'])
+            else:
+                self.move_train_by_loc(train_px_move, prev_station['x_coord'])
         # data will be 
         # data = {
         #     'next_station': {'name': 'Vidisha', 'lat': Decimal('23.522687'), 'lon': Decimal('77.815174'), 'order': 2, 'distance': 49.70376998384893}, 
