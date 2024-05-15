@@ -291,8 +291,8 @@ STATIONS = [
     }
 ]
 
-DISTANCE_BW_ST_IN_PX = 250
-STATION_STRT_PX = 400
+DISTANCE_BW_ST_IN_PX = 300
+STATION_STRT_PX = 60
 
 # Function to add a new key-value pair
 def add_key_value(station):
@@ -321,15 +321,15 @@ class StationDesign(tk.Frame):
         # print("station_capacity ", self.station_capacity)
         self.shift_call = 0
         # Create a Canvas
-        self.canvas = tk.Canvas(root, width=self.screen_width, height=self.screen_height)
-        self.canvas.config(highlightthickness=2, highlightbackground=FOOTER_TEXT_COLOR)
+        self.canvas = tk.Canvas(root, width=self.screen_width, height=self.screen_height, bg=HEADER_TEXT_COLOR)
+        self.canvas.config(highlightthickness=2, highlightbackground=HEADER_TEXT_COLOR)
         self.canvas.pack()
 
         self.start_point = 5
         self.x = STATION_STRT_PX
         # self.y = int(self.screen_height/2)
-        self.y = self.screen_height-100
-        self.circle_radius = 5
+        self.y = self.screen_height-120
+        self.circle_radius = 20
         self.line_width = 150
         self.next_x = None
 
@@ -339,7 +339,7 @@ class StationDesign(tk.Frame):
         self.create_train()
         # self.move_train()
         # self.canvas.after(1000, self.move_train)
-        # self.move_train()
+        self.move_train()
 
     def add_key_value(self, station):
         self.total_stat_dis = (self.total_stat_dis + station['distance']) if station['distance'] else 0
@@ -390,10 +390,10 @@ class StationDesign(tk.Frame):
 
     def create_train(self):
         
-        self.p = self.x - self.start_point
-        self.q = self.y - 5
+        self.p = self.x - self.circle_radius
+        self.q = self.y - self.circle_radius
         # self.circle = self.canvas.create_oval(5, 20, 15, 30, fill="red")
-        self.train = self.canvas.create_oval(self.p, self.q, self.x+self.circle_radius, self.y +5, fill="red", tag='train')
+        self.train = self.canvas.create_oval(self.p, self.q, self.x+self.circle_radius, self.y +self.circle_radius, fill="red", tag='train')
         # pass
         # self.train = self.draw_circle(self.x, self.y, self.circle_radius, fill='red')
 
@@ -457,11 +457,11 @@ class StationDesign(tk.Frame):
             # self.canvas.create_text(x_coord, self.y-20, text=self.stations[ind]['depart_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_dt")
             # self.canvas.create_text(x_coord, self.y-40, text=self.stations[ind]['estimate_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_et")
             dx , dy = self.get_angle_calc(45)
-            self.create_polygon(x_coord+dx, (self.y-30)+dy, self.stations[ind]['name'], self.stations[ind]['abbr'])
+            self.create_polygon(x_coord+dx, (self.y-45)+dy, self.stations[ind]['name'], self.stations[ind]['abbr'])
             # create stations name horizontally
             # self.canvas.create_text(x_coord+dx, (self.y-30)+dy, text=self.stations[ind]['abbr'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr'], anchor="w", angle=45)
-            self.canvas.create_text(x_coord, self.y+20, text=self.stations[ind]['depart_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_dt")
-            self.canvas.create_text(x_coord, self.y+40, text=self.stations[ind]['estimate_time'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=self.stations[ind]['abbr']+"_et")
+            self.canvas.create_text(x_coord, self.y+40, text=self.stations[ind]['depart_time'], font=('Times New Roman', 27, 'bold'), fill=HEADER_BG_COLOR, tags=self.stations[ind]['abbr']+"_dt")
+            self.canvas.create_text(x_coord, self.y+80, text=self.stations[ind]['estimate_time'], font=('Times New Roman', 27, 'bold'), fill=HEADER_BG_COLOR, tags=self.stations[ind]['abbr']+"_et")
             
         
         total_leave_station = 0
@@ -489,7 +489,7 @@ class StationDesign(tk.Frame):
             self.draw_horizontal_line(self.station_points[0]+self.circle_radius, self.y, self.line_width, tag=self.stations[0]['abbr']+"_line", dash=(20,10))
         
         # self.canvas.delete(self.stations[0]['abbr']+'_circle')
-        self.train = self.canvas.create_oval(self.p, self.q, self.p + 10, self.q + 10, fill="red", tag='train')
+        self.train = self.canvas.create_oval(self.p, self.q, self.p + (self.circle_radius*2), self.q + (self.circle_radius*2), fill="red", tag='train')
         # self.canvas.coords(self.train, self.p, self.q, self.p + 10, self.q + 10)
         self.shift_call = self.shift_call +1
 
@@ -543,7 +543,7 @@ class StationDesign(tk.Frame):
                 time.sleep(1)
             # Move the circle by dx and dy
             # self.canvas.coords(self.train, self.x, self.y, self.x + 1, self.y + 10)
-            self.canvas.coords(self.train, self.p, self.q, self.p + 10, self.q + 10)
+            self.canvas.coords(self.train, self.p, self.q, self.p + (self.circle_radius*2), self.q + (self.circle_radius*2))
             if move_train_forward:
                 self.canvas.after(1, self.move_train) # increase value to slow dot move speed
 
@@ -587,11 +587,11 @@ class StationDesign(tk.Frame):
             # self.canvas.create_text(self.station_points[i], self.y-20, text=f"{'End' if station['depart_time'] is None else station['depart_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_dt")
             # self.canvas.create_text(self.station_points[i], self.y-40, text=f"{'Start' if station['estimate_time'] is None else station['estimate_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_et")
             dx , dy = self.get_angle_calc(45)
-            self.create_polygon(self.station_points[i]+dx, (self.y-30)+dy, station['name'], station['abbr'])
+            self.create_polygon(self.station_points[i]+dx, (self.y-45)+dy, station['name'], station['abbr'])
             # create stations name horizontally
             # self.canvas.create_text(self.station_points[i]+dx, (self.y-30)+dy, text=station['name'], font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr'], angle=45)
-            self.canvas.create_text(self.station_points[i], self.y+20, text=f"{'End' if station['depart_time'] is None else station['depart_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_dt")
-            self.canvas.create_text(self.station_points[i], self.y+40, text=f"{'Start' if station['estimate_time'] is None else station['estimate_time']}", font=('Times New Roman', 15, 'bold'), fill=FOOTER_TEXT_COLOR, tags=station['abbr']+"_et")
+            self.canvas.create_text(self.station_points[i], self.y+40, text=f"{'End' if station['depart_time'] is None else station['depart_time']}", font=('Times New Roman', 27, 'bold'), fill=HEADER_BG_COLOR, tags=station['abbr']+"_dt")
+            self.canvas.create_text(self.station_points[i], self.y+80, text=f"{'Start' if station['estimate_time'] is None else station['estimate_time']}", font=('Times New Roman', 27, 'bold'), fill=HEADER_BG_COLOR, tags=station['abbr']+"_et")
             i+=1
             
     def get_angle_calc(self, angle):
@@ -627,18 +627,18 @@ class StationDesign(tk.Frame):
         split_text_list = self.split_text_into_pairs(station_name)
         split_text_with_px = self.calculate_values(split_text_list)
         for name_chunk in split_text_with_px:
-            self.canvas.create_text(x_coord+name_chunk[1], y_coord, text=name_chunk[0], angle=60, font=('Times New Roman', 15, 'bold'), anchor="w", justify=tk.LEFT, tags=tag)
+            self.canvas.create_text(x_coord+name_chunk[1], y_coord, text=name_chunk[0], angle=60, font=('Times New Roman', 35, 'bold'), anchor="w", justify=tk.LEFT, tags=tag, fill=HEADER_BG_COLOR)
             # x_info += 25
 
 
     def draw_horizontal_line(self, x1, y1, length, tag=None, dash=None):
         x2 = x1 + length
         if tag:
-            self.canvas.create_line(x1, y1, x2, y1, width=2, fill="black", tags=tag, dash=dash)
+            self.canvas.create_line(x1, y1, x2, y1, width=7, fill=HEADER_BG_COLOR, tags=tag, dash=dash)
         else:
-            self.canvas.create_line(x1, y1, x2, y1, width=2, fill="black")
+            self.canvas.create_line(x1, y1, x2, y1, width=7, fill=HEADER_BG_COLOR)
 
-    def draw_circle(self, x, y, radius, fill=None, tag=None):
+    def draw_circle(self, x, y, radius, fill=HEADER_BG_COLOR, tag=None):
         x1, y1 = x - radius, y - radius
         x2, y2 = x + radius, y + radius
         print('draw circle', x1,y1,x2,y2)
@@ -678,6 +678,7 @@ class StationDesign(tk.Frame):
         print('getting instant distance', data['next_station']['instant_distance'])
         
         next_station = list(filter(lambda x: x.get('name') == data['next_station']['name'], self.stations))[0]
+        self.canvas.itemconfig(next_station['abbr'], fill="yellow")
         stat_km_per_px = round(next_station['px_per_km'], 1)
         print('next stations px per km', stat_km_per_px)
         

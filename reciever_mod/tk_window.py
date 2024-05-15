@@ -24,25 +24,40 @@ class DisplayDesign():
         print("Window can not be closed")
 
     def main_frame(self):
+        self.new_header = Frame(self.root, highlightbackground=HEADER_BG_COLOR, highlightthickness=HIGHLIGHTTHICKNESS, bg=HEADER_BG_COLOR)
+        self.new_header.pack_propagate(False)
+        self.header_height = int((self.WINDOW_HEIGHT*20)/100)
+        self.new_header.configure(width=self.WINDOW_WIDTH, height=self.header_height)
 
+        self.new_header.pack()
+        # Create the inner frame with red background
+        # inner_frame_width = int(self.WINDOW_WIDTH * 0.3)
+        # self.inner_frame = Frame(self.new_header, bg="red", width=inner_frame_width)
+        # self.inner_frame.pack(side=LEFT, fill=Y)
+
+        # # Create a label inside the inner frame
+        # label_text = "Label Inside Red Frame"
+        # label = Label(self.inner_frame, text=label_text, bg="red", fg="white")
+        # label.pack(pady=10)  # Adjust padding as needed
+
+        self.body_frame = Frame(self.root)
+        # self.body_frame = Frame(self.root, highlightbackground="blue", highlightthickness=HIGHLIGHTTHICKNESS)
+        self.body_frame.pack(fill="both", expand=True)
+        # self.body_frame.configure(width=self.WINDOW_WIDTH, height=self.WINDOW_HEIGHT* 0.6)
+        # self.footer_frame = Frame(self.root)
+        # # self.footer_frame = Frame(self.root, highlightbackground=HEADER_BG_COLOR, highlightthickness=HIGHLIGHTTHICKNESS, bg=HEADER_BG_COLOR)
+        # self.footer_frame.pack_propagate(False)
+        # self.footer_frame.configure(width=self.WINDOW_WIDTH, height=400)
+        # self.footer_frame.pack()
+        # height_of_footer_frame = self.footer_frame.winfo_reqheight()
+        # print(f"Height of self.footer_frame: {height_of_footer_frame}")
         self.header_frame = Frame(self.root, highlightbackground=HEADER_BG_COLOR, highlightthickness=HIGHLIGHTTHICKNESS, bg=HEADER_BG_COLOR)
         self.header_frame.pack_propagate(False)
         self.header_frame.configure(width=self.WINDOW_WIDTH, height=60)
-        self.footer_frame = Frame(self.root)
-        # self.footer_frame = Frame(self.root, highlightbackground=HEADER_BG_COLOR, highlightthickness=HIGHLIGHTTHICKNESS, bg=HEADER_BG_COLOR)
-        self.footer_frame.pack_propagate(False)
-        self.footer_frame.configure(width=self.WINDOW_WIDTH, height=400)
-        self.body_frame = Frame(self.root)
-        # self.body_frame = Frame(self.root, highlightbackground="blue", highlightthickness=HIGHLIGHTTHICKNESS)
         self.header_frame.pack()
-        self.body_frame.pack(fill="both", expand=True)
-        # self.body_frame.configure(width=self.WINDOW_WIDTH, height=self.WINDOW_HEIGHT* 0.6)
-        self.footer_frame.pack(side = BOTTOM)
-        height_of_footer_frame = self.footer_frame.winfo_reqheight()
-        print(f"Height of self.footer_frame: {height_of_footer_frame}")
 
     def sub_frames(self):
-        
+        self.new_header_setup()
         self.header()
         self.body()
         self.footer()
@@ -79,10 +94,90 @@ class DisplayDesign():
         fps = 100  # Change the fps to make the animation faster/slower
         shift()
 
+    def new_header_setup(self):
+        # Create the inner frame with red background
+        inner_frame_width = int(self.WINDOW_WIDTH * 0.35)
+        self.inner_frame = Frame(self.new_header, bg=HEADER_BG_COLOR, width=inner_frame_width)
+        self.inner_frame.pack(side=LEFT, fill=Y)
+        
+
+        # Create a label inside the inner frame
+        label_text = "Bhopal Junction"
+        label_font_size = self.calculate_font_size(label_text, inner_frame_width)
+        label = Label(self.inner_frame, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size, "bold"), wraplength=inner_frame_width)
+        label.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
+        # label.configure(wraplength=inner_frame_width)
+
+        inner_frame3_width = 45
+        print("arrow frame width", inner_frame3_width)
+        self.inner_frame3 = Frame(self.new_header, bg=HEADER_BG_COLOR, width=inner_frame3_width)
+        self.inner_frame3.pack(side=LEFT, fill=Y)
+        height_inner_frame3 = int(self.header_height //2)
+        # Create a canvas covering the entire frame
+        canvas = Canvas(self.inner_frame3, bg=HEADER_BG_COLOR, width=inner_frame3_width, bd=0, highlightthickness=0)
+        canvas.pack(fill=BOTH, expand=True)
+        print("arrow frame width", inner_frame3_width)
+
+        # drawing arrow in the canvas
+        canvas.create_line(0, height_inner_frame3, 30, height_inner_frame3, width=10, fill="black")
+
+        # Draw the triangle
+        triangle_points = [(30, height_inner_frame3-10), (30, height_inner_frame3+10), (45, height_inner_frame3)]
+        canvas.create_polygon(triangle_points, fill="black", outline="black")
+
+        inner_frame2_width = int(self.WINDOW_WIDTH * 0.35)
+        self.inner_frame2 = Frame(self.new_header, bg=HEADER_BG_COLOR, width=inner_frame2_width)
+        self.inner_frame2.pack(side=LEFT, fill=Y)
+
+        label_text = "Virangana Lakshmibai Jhansi Junction"
+        label_text = "Vidisha "
+        label_font_size = self.calculate_font_size(label_text, inner_frame2_width)
+        label = Label(self.inner_frame2, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size, "bold"), wraplength=inner_frame_width)
+        label.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
+
+        
+        inner_frame3_width = int(self.WINDOW_WIDTH * 0.25)
+        self.inner_frame3 = Frame(self.new_header, bg=HEADER_BG_COLOR, width=inner_frame3_width)
+        self.inner_frame3.pack(side=RIGHT, fill=Y)
+
+        label_text1 = datetime.now().strftime("%d-%m-%Y")
+        label_font_size = self.calculate_font_size(label_text1, inner_frame3_width)
+        self.top_right_label1 = Label(self.inner_frame3, text=label_text1, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-7, "bold"))
+        self.top_right_label1.pack(pady=10, fill="x", expand=True)
+        label_text2 = datetime.now().strftime("%H:%M:%S")
+        self.top_right_label2 = Label(self.inner_frame3, text=label_text2, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-7, "bold"))
+        self.top_right_label2.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
+
+        label_text3 = "Next Stop"
+        label_font_size = self.calculate_font_size(label_text3, inner_frame3_width)
+        self.top_right_label3 = Label(self.inner_frame3, text=label_text3, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-18, "bold"))
+        self.top_right_label3.pack(pady=10, fill="x", expand=True)
+        label_text4 = str(120)+" km"
+        self.top_right_label4 = Label(self.inner_frame3, text=label_text4, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-18, "bold"))
+        self.top_right_label4.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
+
+        label_text5 = "Speed"
+        label_font_size = self.calculate_font_size(label_text5, inner_frame3_width)
+        self.top_right_label5 = Label(self.inner_frame3, text=label_text5, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-57, "bold"))
+        self.top_right_label5.pack(pady=10, fill="x", expand=True)
+        label_text6 = str(120)+" kmph"
+        self.top_right_label6 = Label(self.inner_frame3, text=label_text6, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-57, "bold"))
+        self.top_right_label6.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
+
+
+    def calculate_font_size(self, text, frame_width):
+        font_size = 1
+        while True:
+            label_width = Label(self.inner_frame, text=text, font=("Arial", font_size)).winfo_reqwidth()
+            if label_width >= frame_width:
+                break
+            font_size += 1
+        return font_size
+
     def body(self):
         
-        self.data_left_frame = Frame(self.body_frame, highlightbackground=BODY_TABLE_BOARDER_COLOR, highlightthickness=HIGHLIGHTTHICKNESS)
-        self.data_right_frame = Frame(self.body_frame, highlightbackground=BODY_TABLE_BOARDER_COLOR, highlightthickness=HIGHLIGHTTHICKNESS)
+        self.data_left_frame = Frame(self.body_frame, bg=HEADER_TEXT_COLOR)
+        self.data_right_frame = Frame(self.body_frame, bg=HEADER_TEXT_COLOR)
         self.data_left_frame.pack_propagate(False)
         self.data_left_frame.configure(width=self.WINDOW_WIDTH/2, height=200)
         self.data_left_frame.pack(side = LEFT)
@@ -90,54 +185,93 @@ class DisplayDesign():
         self.data_right_frame.configure(width=self.WINDOW_WIDTH/2, height=200)
         self.data_right_frame.pack(side = LEFT)
 
-        self.w1 = Label(self.data_left_frame, text="The next station is", font=(FONT_TYPE, 30, 'bold'))
-        self.w1.pack()
-        self.w2 = Label(self.data_left_frame, text=self.data_dict['next_station']['name'], font=(FONT_TYPE, 30, 'bold'))
-        self.w2.pack()
+        inner_frame2_width = int(self.WINDOW_WIDTH/2)
 
-        self.t1 = Frame(self.data_right_frame, highlightbackground=BODY_TABLE_BOARDER_COLOR, highlightthickness=HIGHLIGHTTHICKNESS)
-        self.t1.pack(fill=BOTH, expand =1)
-        self.speed_l = Label(self.t1, text=f"Speed ", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
-        self.speed_l.pack(side = LEFT, padx=10)
+        label_text = "Next Halting Station"
+        label_font_size = self.calculate_font_size(label_text, inner_frame2_width)
 
-        self.speed_r = Label(self.t1, text=f"{self.data_dict['speed']}", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
-        self.speed_r.pack(side = RIGHT, padx=10)
+        self.w1 = Label(self.data_left_frame, text=label_text, font=(FONT_TYPE, label_font_size, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
+        self.w1.pack(padx=20 )
+        self.w1.configure(wraplength=self.WINDOW_WIDTH/2)
+        self.w1.place(relx=0.5, rely=0.5, anchor="center")
+
+        label_text2 = "Virangana Lakshmibai Jhansi Junction"
+        label_font_size2 = self.calculate_font_size(label_text2, inner_frame2_width)
+        self.w2 = Label(self.data_right_frame, text=label_text2, font=(FONT_TYPE, label_font_size, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
+        self.w2.pack(padx=20 )
+        self.w2.configure(wraplength=self.WINDOW_WIDTH/2)
+        self.w2.place(relx=0.5, rely=0.5, anchor="center")
+
+        # self.t1 = Frame(self.data_right_frame, highlightbackground=BODY_TABLE_BOARDER_COLOR, highlightthickness=HIGHLIGHTTHICKNESS)
+        # self.t1.pack(fill=BOTH, expand =1)
+        # self.speed_l = Label(self.t1, text=f"Speed ", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
+        # self.speed_l.pack(side = LEFT, padx=10)
+
+        # self.speed_r = Label(self.t1, text=f"{self.data_dict['speed']}", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
+        # self.speed_r.pack(side = RIGHT, padx=10)
         
 
         ################################
         # time = Label(self.data_right_frame, text="Time - 12:11AM", font=(FONT_TYPE, FONT_SIZES['h3'], 'bold'))
-        self.t2 = Frame(self.data_right_frame, highlightbackground=BODY_TABLE_BOARDER_COLOR, highlightthickness=HIGHLIGHTTHICKNESS)
-        self.t2.pack(fill=BOTH, expand =1)
-        self.time_l = Label(self.t2, text=f"Time ", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
-        self.time_l.pack(side = LEFT, padx=10)
+        # self.t2 = Frame(self.data_right_frame, highlightbackground=BODY_TABLE_BOARDER_COLOR, highlightthickness=HIGHLIGHTTHICKNESS)
+        # self.t2.pack(fill=BOTH, expand =1)
+        # self.time_l = Label(self.t2, text=f"Time ", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
+        # self.time_l.pack(side = LEFT, padx=10)
 
-        self.time_r = Label(self.t2, font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
-        self.time_r.pack(side = RIGHT, padx=10)
+        # self.time_r = Label(self.t2, font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
+        # self.time_r.pack(side = RIGHT, padx=10)
         
-        def update_time():
-            now = strftime("%H:%M:%S")
-            self.time_r.config(text=now)
+        # def update_time():
+        #     now = strftime("%H:%M:%S")
+        #     self.time_r.config(text=now)
 
-            # now = datetime.now()
-            # # Format the date and time
-            # formatted_date_time = now.strftime("%d-%m-%Y %H:%M:%S %p") 
-            # time.config(text=formatted_date_time)
+        #     # now = datetime.now()
+        #     # # Format the date and time
+        #     # formatted_date_time = now.strftime("%d-%m-%Y %H:%M:%S %p") 
+        #     # time.config(text=formatted_date_time)
 
-            self.data_right_frame.after(1000, update_time)
-        update_time()
+        #     self.data_right_frame.after(1000, update_time)
+        # update_time()
         ################################
 
         
-        self.late = Label(self.data_right_frame, text=f"Late by {self.data_dict['late_by']}", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
-        self.late.pack(fill=BOTH,side = LEFT, padx=10)
+        # self.late = Label(self.data_right_frame, text=f"Late by {self.data_dict['late_by']}", font=(FONT_TYPE, FONT_SIZES['h1'], 'bold'))
+        # self.late.pack(fill=BOTH,side = LEFT, padx=10)
         # frame = Frame(self.data_right_frame, height=100,width=150,bg="black")
         # frame.pack()
 
     def footer(self):
-        self.station_obj = StationDesign(self.footer_frame, self.footer_frame.winfo_reqheight(), self.footer_frame.winfo_reqwidth(), self.data_dict['stations'])
-        
+        self.canvas_page = Canvas(self.body_frame, bg="white")
+        print("body frame height", self.body_frame.winfo_reqheight())
+        print("body frame width", self.body_frame.winfo_reqwidth())
+        print("Canva height", self.canvas_page.winfo_reqheight())
+        print("Canva width", self.canvas_page.winfo_reqwidth())
+        self.canvas_page.pack_propagate(False)
+        self.canvas_page.configure(width=self.WINDOW_WIDTH, height=(((self.WINDOW_HEIGHT*80)/100)-60))
+        self.canvas_page.pack(expand=True, fill="both")
+        self.station_obj = StationDesign(self.canvas_page, self.canvas_page.winfo_reqheight(), self.canvas_page.winfo_reqwidth(), self.data_dict['stations'])
         # self.stat = Label(self.footer_frame, text="Stations detail", width=self.WINDOW_WIDTH)
         # self.stat.pack()
+        self.current_page = 1
+        self.current_page_head = 1
+
+
+        self.update_page()
+
+    def update_page(self):
+        if self.current_page == 1:
+            self.canvas_page.pack(expand=True, fill="both")
+            self.data_left_frame.pack_forget()
+            self.data_right_frame.pack_forget()
+        elif self.current_page == 2:
+            self.canvas_page.pack_forget()
+            self.data_left_frame.pack(expand=True, fill="both", side="left")
+            self.data_right_frame.pack(expand=True, fill="both", side="right")
+
+        self.current_page = 1 if self.current_page == 2 else 2
+        # self.current_page = 1
+        self.root.after(10000, self.update_page)
+
 
     def run(self, data):
         self.data_dict = data
