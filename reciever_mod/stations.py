@@ -339,7 +339,7 @@ class StationDesign(tk.Frame):
         self.create_train()
         # self.move_train()
         # self.canvas.after(1000, self.move_train)
-        self.move_train()
+        # self.move_train()
 
     def add_key_value(self, station):
         self.total_stat_dis = (self.total_stat_dis + station['distance']) if station['distance'] else 0
@@ -503,7 +503,7 @@ class StationDesign(tk.Frame):
                 if self.ind+1 == len(self.stations):
                     print('Reach Destination')
                     self.canvas.delete("train")
-                    self.train = self.canvas.create_oval(self.p, self.q, self.p + 10, self.q + 10, fill="red", tag='train')
+                    self.train = self.canvas.create_oval(self.p, self.q, self.p + (self.circle_radius*2), self.q + (self.circle_radius*2), fill="red", tag='train')
                     return False
                 else:
                     self.shift_stations_left(current_station_index)
@@ -572,7 +572,7 @@ class StationDesign(tk.Frame):
                 print('move station by loc 4')
                 # self.canvas.after(1, self.move_train) # increase value to slow dot move speed
                 self.canvas.delete("train")
-                self.train = self.canvas.create_oval(self.p, self.q, self.p + 10, self.q + 10, fill="red", tag='train')
+                self.train = self.canvas.create_oval(self.p, self.q, self.p + (self.circle_radius*2), self.q + (self.circle_radius*2), fill="red", tag='train')
 
     def draw_station_name(self):
         i = 0
@@ -667,8 +667,17 @@ class StationDesign(tk.Frame):
         dx , dy = self.get_angle_calc(45)
         next_station_by_self = list(filter(lambda x: x.get('name') == next_station['name'], self.stations))[0]
         x_coord = next_station_by_self['x_coord']
-        self.canvas.create_text(x_coord, self.y+20, text=new_depart_time, font=('Times New Roman', 15, 'bold'), fill=late_by_color, tags=next_station['abbr']+"_dt")
-        self.canvas.create_text(x_coord, self.y+40, text=new_reaching_time, font=('Times New Roman', 15, 'bold'), fill=late_by_color, tags=next_station['abbr']+"_et")
+        for station in self.stations:
+            if int(station['order']) < int(next_station['order']):
+                self.canvas.itemconfig(station['abbr']+"_circle", fill=PREV_STATION)
+                self.canvas.itemconfig(station['abbr'], fill=PREV_STATION)
+                self.canvas.itemconfig(station['abbr']+"_dt", fill=PREV_STATION)
+                self.canvas.itemconfig(station['abbr']+"_et", fill=PREV_STATION)
+        self.canvas.create_text(x_coord, self.y+40, text=new_depart_time, font=('Times New Roman', 27, 'bold'), fill="yellow", tags=next_station['abbr']+"_dt")
+        self.canvas.create_text(x_coord, self.y+80, text=new_reaching_time, font=('Times New Roman', 27, 'bold'), fill="yellow", tags=next_station['abbr']+"_et")
+        self.canvas.itemconfig(next_station['abbr']+"_circle", fill="yellow")
+        self.canvas.itemconfig(next_station['abbr'], fill="yellow")
+
         
         
     def update_train_location(self, data, late_by_color):
@@ -678,7 +687,6 @@ class StationDesign(tk.Frame):
         print('getting instant distance', data['next_station']['instant_distance'])
         
         next_station = list(filter(lambda x: x.get('name') == data['next_station']['name'], self.stations))[0]
-        self.canvas.itemconfig(next_station['abbr'], fill="yellow")
         stat_km_per_px = round(next_station['px_per_km'], 1)
         print('next stations px per km', stat_km_per_px)
         

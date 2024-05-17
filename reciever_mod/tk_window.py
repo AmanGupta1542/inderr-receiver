@@ -19,6 +19,7 @@ class DisplayDesign():
         self.WINDOW_WIDTH = self.root.winfo_screenwidth()
         self.WINDOW_HEIGHT = self.root.winfo_screenheight()
         self.station_obj = None
+        self.cur_formated_date = datetime.now().strftime("%d-%m-%Y")
 
     def prevent_close(self):
         print("Window can not be closed")
@@ -142,10 +143,10 @@ class DisplayDesign():
 
         label_text1 = datetime.now().strftime("%d-%m-%Y")
         label_font_size = self.calculate_font_size(label_text1, inner_frame3_width)
-        self.top_right_label1 = Label(self.inner_frame3, text=label_text1, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-7, "bold"))
+        self.top_right_label1 = Label(self.inner_frame3, text=self.cur_formated_date, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-7, "bold"))
         self.top_right_label1.pack(pady=10, fill="x", expand=True)
         label_text2 = datetime.now().strftime("%H:%M:%S")
-        self.top_right_label2 = Label(self.inner_frame3, text=label_text2, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-7, "bold"))
+        self.top_right_label2 = Label(self.inner_frame3, text='', bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-7, "bold"))
         self.top_right_label2.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
 
         label_text3 = "Next Stop"
@@ -153,7 +154,7 @@ class DisplayDesign():
         self.top_right_label3 = Label(self.inner_frame3, text=label_text3, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-18, "bold"))
         self.top_right_label3.pack(pady=10, fill="x", expand=True)
         label_text4 = str(120)+" km"
-        self.top_right_label4 = Label(self.inner_frame3, text=label_text4, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-18, "bold"))
+        self.top_right_label4 = Label(self.inner_frame3, text='', bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-18, "bold"))
         self.top_right_label4.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
 
         label_text5 = "Speed"
@@ -161,9 +162,24 @@ class DisplayDesign():
         self.top_right_label5 = Label(self.inner_frame3, text=label_text5, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-57, "bold"))
         self.top_right_label5.pack(pady=10, fill="x", expand=True)
         label_text6 = str(120)+" kmph"
-        self.top_right_label6 = Label(self.inner_frame3, text=label_text6, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-57, "bold"))
+        self.top_right_label6 = Label(self.inner_frame3, text='', bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-57, "bold"))
         self.top_right_label6.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
+        
+        def update_time():
+            now = strftime("%H:%M:%S")
+            cur_date = datetime.now().strftime("%d-%m-%Y")
+            self.top_right_label2.config(text=now)
+            if self.cur_formated_date != cur_date:
+                self.top_right_label1.config(text=cur_date)
 
+            # now = datetime.now()
+            # # Format the date and time
+            # formatted_date_time = now.strftime("%d-%m-%Y %H:%M:%S %p") 
+            # time.config(text=formatted_date_time)
+
+            self.inner_frame.after(1000, update_time)
+        update_time()
+        
 
     def calculate_font_size(self, text, frame_width):
         font_size = 1
@@ -288,15 +304,16 @@ class DisplayDesign():
             self.w2.config(text=data['next_station']['name'])
             inst_speed = round(data['next_station']['instant_speed'], 2)
             inst_speed_str = str(inst_speed)+" km/h"
-            self.speed_r.config(text=inst_speed_str)
+            self.top_right_label6.config(text=inst_speed_str)
             # late_by_txt = 'Early By '+str(round(data['late_by'], 2))+ 'minutes' if data['late_by'] < 0 else 'Late By '+str(round(data['late_by'], 2))+ 'minutes'
             late_stat = data['next_station']['late_by']
-            self.late.config(text=late_stat)
+            self.top_right_label4.config(text=round(float(data['next_station']['remaining_distance']), 2))
+            # self.late.config(text=late_stat)
             if 'late' in late_stat.lower():
                 color = 'red'
             else:
                 color = 'blue'
-            self.late.config(fg=color)
+            # self.late.config(fg=color)
             self.station_obj.update_train_location(data, color)
         # except Exception as e:
             # print(e)
