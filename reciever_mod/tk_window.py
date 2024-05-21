@@ -4,11 +4,17 @@ from datetime import datetime
 
 from .constants import *
 from .stations import StationDesign
+import sys
 
 class DisplayDesign():
     def __init__(self, *args, **kwargs):
         self.data_dict = None
-        self.root = root = Tk()
+        try:
+            self.root = root = Tk()
+        except tk.TclError:
+            print("Failed to start Tkinter. Running in non-GUI mode.")
+            # Handle non-GUI mode or exit
+            sys.exit(1)
         self.root.title("Inderr")
         # self.root.state("zoomed")
         self.root.wm_attributes("-fullscreen", True)
