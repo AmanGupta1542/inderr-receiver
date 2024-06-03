@@ -148,8 +148,8 @@ class Receiver:
 
     def tk_window(self, text_var=''):
         self.dd = DisplayDesign()
-        while self.recieved_data is None:
-            pass
+        # while self.recieved_data is None:
+        #     pass
         # self.stations = self.recieved_data.get('stations', None)
         # if self.station_initialized:
         #     print('Updatinig Display Window')
@@ -184,11 +184,11 @@ class Receiver:
         avg_speed = self.avg_speed # in kmph
         instent_speed = self.instant_speed # in kmph
         time = remaining_distance/instent_speed # in hours
-        totaL_time_to_reach = datetime.now() + timedelta(hours=time)
+        total_time_to_reach = datetime.now() + timedelta(hours=time)
         next_station = list(filter(lambda x: x.get('name') == self.recieved_data['next_station']['name'], self.recieved_data['stations']))[0]
         # convert next station arrived(estimate_time ) string in python datetime obj
         next_stat_time = datetime.strptime(next_station['estimate_time'], '%H:%M')
-        time_difference  = totaL_time_to_reach - next_stat_time
+        time_difference  = total_time_to_reach - next_stat_time
         minutes_difference = time_difference.total_seconds() / 60
         res = minutes_difference
         print(res)
@@ -292,9 +292,9 @@ class Receiver:
                 #     }
                 # )
             # self.update_text(text_var)
-            if self.station_initialized:
-                print('Updatinig Display Window')
-                self.dd.update_data(self.recieved_data)
+            # if self.station_initialized:
+            print('Updatinig Display Window')
+            self.dd.update_data(self.recieved_data)
             client_socket.sendall("ACK".encode())
                 
                                                         

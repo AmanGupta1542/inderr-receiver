@@ -654,8 +654,8 @@ class StationDesign(tk.Frame):
                 self.canvas.create_oval(x1, y1, x2, y2, outline="black")
     
     def update_train_rech_depart_time(self, next_station, late_by_color):
-        print(next_station['totaL_time_to_reach'])
-        exp_reachin_time = datetime.strptime(next_station['totaL_time_to_reach'], "%Y-%m-%dT%H:%M:%S.%f")
+        print(next_station['total_time_to_reach'])
+        exp_reachin_time = datetime.strptime(next_station['total_time_to_reach'], "%Y-%m-%dT%H:%M:%S.%f")
         new_reaching_time = exp_reachin_time.strftime("%H:%M")
         new_depart_time = (exp_reachin_time + timedelta(minutes=int(next_station['halt_time']))).strftime("%H:%M")
         print('Expected reaching time', exp_reachin_time.strftime("%m-%d-%Y %H:%M:%S"))
@@ -706,11 +706,13 @@ class StationDesign(tk.Frame):
             pass
         else:
             if remain_dis <= 1:
+                return_stat = True
                 add_radius = self.circle_radius if prev_station['order'] == 1 else (self.circle_radius*2)
                 self.move_train_by_loc(DISTANCE_BW_ST_IN_PX+(add_radius), prev_station['x_coord'])
                 print("************************************************************")
                 print('Remaining distance is less then one,', DISTANCE_BW_ST_IN_PX+(add_radius), prev_station['x_coord'])
             elif remain_dis >=  (data['next_station']['distance'] - 1):
+                return_stat = False
                 print("************************************************************")
                 print("Train Departed")
                 # checking if station is start station
@@ -721,7 +723,9 @@ class StationDesign(tk.Frame):
                 # mark departure time
                 # self.move_train_by_loc(0, prev_station['x_coord'])
             else:
+                return_stat = False
                 self.move_train_by_loc(train_px_move, prev_station['x_coord'])
+        return return_stat
         # data will be 
         # data = {
         #     'next_station': {'name': 'Vidisha', 'lat': Decimal('23.522687'), 'lon': Decimal('77.815174'), 'order': 2, 'distance': 49.70376998384893}, 

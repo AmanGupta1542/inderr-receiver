@@ -11,8 +11,9 @@ class DisplayDesign():
         self.data_dict = None
         try:
             self.root = root = Tk()
-        except tk.TclError:
+        except Exception as e:
             print("Failed to start Tkinter. Running in non-GUI mode.")
+            print(e)
             # Handle non-GUI mode or exit
             sys.exit(1)
         self.root.title("Inderr")
@@ -26,6 +27,7 @@ class DisplayDesign():
         self.WINDOW_HEIGHT = self.root.winfo_screenheight()
         self.station_obj = None
         self.cur_formated_date = datetime.now().strftime("%d-%m-%Y")
+        self.getting_data = False
 
     def prevent_close(self):
         print("Window can not be closed")
@@ -197,6 +199,12 @@ class DisplayDesign():
         return font_size
 
     def body(self):
+        self.info_frame = Frame(self.body_frame, bg=HEADER_TEXT_COLOR)
+        info_text = 'Indian Railways welcome you'
+        self.info_L = Label(self.info_frame, text=info_text, font=(FONT_TYPE, 70, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
+        self.info_L.pack(padx=20 )
+        # self.info_L.configure(wraplength=self.WINDOW_WIDTH/2)
+        self.info_L.place(relx=0.5, rely=0.5, anchor="center")
         
         self.data_left_frame = Frame(self.body_frame, bg=HEADER_TEXT_COLOR)
         self.data_right_frame = Frame(self.body_frame, bg=HEADER_TEXT_COLOR)
@@ -271,7 +279,8 @@ class DisplayDesign():
         self.canvas_page.pack_propagate(False)
         self.canvas_page.configure(width=self.WINDOW_WIDTH, height=(((self.WINDOW_HEIGHT*80)/100)-60))
         self.canvas_page.pack(expand=True, fill="both")
-        self.station_obj = StationDesign(self.canvas_page, self.canvas_page.winfo_reqheight(), self.canvas_page.winfo_reqwidth(), self.data_dict['stations'])
+        print('data_dict rec',self.data_dict)
+        self.station_obj = StationDesign(self.canvas_page, self.canvas_page.winfo_reqheight(), self.canvas_page.winfo_reqwidth(), self.data_dict['stations']) if self.data_dict is not None else None
         # self.stat = Label(self.footer_frame, text="Stations detail", width=self.WINDOW_WIDTH)
         # self.stat.pack()
         self.current_page = 1
@@ -281,14 +290,22 @@ class DisplayDesign():
         self.update_page()
 
     def update_page(self):
-        if self.current_page == 1:
-            self.canvas_page.pack(expand=True, fill="both")
+        if not self.getting_data:
             self.data_left_frame.pack_forget()
             self.data_right_frame.pack_forget()
-        elif self.current_page == 2:
             self.canvas_page.pack_forget()
-            self.data_left_frame.pack(expand=True, fill="both", side="left")
-            self.data_right_frame.pack(expand=True, fill="both", side="right")
+            self.info_frame.pack(expand=True, fill="both", side="left")
+        else :
+            if self.current_page == 1:
+                self.canvas_page.pack(expand=True, fill="both")
+                self.data_left_frame.pack_forget()
+                self.data_right_frame.pack_forget()
+                self.info_frame.pack_forget()
+            elif self.current_page == 2:
+                self.canvas_page.pack_forget()
+                self.data_left_frame.pack(expand=True, fill="both", side="left")
+                self.data_right_frame.pack(expand=True, fill="both", side="right")
+                self.info_frame.pack_forget()
 
         self.current_page = 1 if self.current_page == 2 else 2
         # self.current_page = 1
@@ -305,9 +322,11 @@ class DisplayDesign():
         self.data_dict = data
         # try:
         print('station_obj : is none')
+        # print(self.station_obj)
         if self.station_obj is not None:
             print('station object created')
-            self.w2.config(text=data['next_station']['name'])
+            next_station_name = data['next_station']['name']
+            self.w2.config(text=next_station_name)
             inst_speed = round(data['next_station']['instant_speed'], 2)
             inst_speed_str = str(inst_speed)+" km/h"
             self.top_right_label6.config(text=inst_speed_str)
@@ -319,8 +338,17 @@ class DisplayDesign():
                 color = 'red'
             else:
                 color = 'blue'
+            is_near_station = self.station_obj.update_train_location(data, color)
+            if is_near_station:
+                self.info_L.config(text="Welcome to the "+next_station_name)
+                self.getting_data = False
+            else:
+                self.getting_data = True
+        else:
+            self.getting_data = False
+            self.station_obj = StationDesign(self.canvas_page, self.canvas_page.winfo_reqheight(), self.canvas_page.winfo_reqwidth(), self.data_dict['stations']) if self.data_dict is not None else None
+
             # self.late.config(fg=color)
-            self.station_obj.update_train_location(data, color)
         # except Exception as e:
             # print(e)
 
