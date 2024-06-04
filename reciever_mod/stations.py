@@ -3,6 +3,7 @@ import time
 from .constants import *
 import math
 from datetime import datetime, timedelta
+import os
 
 STATIONS0 = [
     {
@@ -293,6 +294,7 @@ STATIONS = [
 
 DISTANCE_BW_ST_IN_PX = 300
 STATION_STRT_PX = 60
+FILE_PATH = "restart_time_log.txt"
 
 # Function to add a new key-value pair
 def add_key_value(station):
@@ -340,6 +342,26 @@ class StationDesign(tk.Frame):
         # self.move_train()
         # self.canvas.after(1000, self.move_train)
         # self.move_train()
+        self.is_restarted = self.create_or_read_file()
+
+    def create_or_read_file(self):
+        is_restarted = False
+        print('file check running')
+        current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        data = f'{current_datetime}\n'
+        # Check if the file exists
+        if os.path.exists(FILE_PATH):
+            # If the file exists, open it in append mode
+            with open(FILE_PATH, 'a') as file:
+                file.write(data)
+            is_restarted = True
+        else:
+            # If the file does not exist, create it and open it in append mode
+            with open(FILE_PATH, 'a') as file:
+                file.write(data)
+
+        return is_restarted
+
 
     def add_key_value(self, station):
         self.total_stat_dis = (self.total_stat_dis + station['distance']) if station['distance'] else 0
@@ -681,12 +703,20 @@ class StationDesign(tk.Frame):
         
         
     def update_train_location(self, data, late_by_color):
+        next_station = list(filter(lambda x: x.get('name') == data['next_station']['name'], self.stations))[0]
+        prev_station = list(filter(lambda x: x.get('order') == int(next_station['order'])-1, self.stations))[0]
+        if self.is_restarted:
+            for i in range(len(self.stations)):
+                if self.stations[i]['name'] == prev_station['name']:
+                    break
+                else:
+                    add_radius = self.circle_radius if self.stations[i]['order'] == 1 else (self.circle_radius*2)
+                    self.move_train_by_loc(DISTANCE_BW_ST_IN_PX+add_radius, self.stations[i]['x_coord'])
         print('supdate_train_location run')
         self.update_train_rech_depart_time(data['next_station'], late_by_color)
         distance_travel = data['next_station']['instant_distance']
         print('getting instant distance', data['next_station']['instant_distance'])
         
-        next_station = list(filter(lambda x: x.get('name') == data['next_station']['name'], self.stations))[0]
         stat_km_per_px = round(next_station['px_per_km'], 1)
         print('next stations px per km', stat_km_per_px)
         
@@ -700,7 +730,6 @@ class StationDesign(tk.Frame):
         print('distance travel', dis_travel)
         train_px_move = round(dis_travel * stat_km_per_px, 1)
         print('train move px', train_px_move)
-        prev_station = list(filter(lambda x: x.get('order') == int(next_station['order'])-1, self.stations))[0]
         print(prev_station)
         if data['next_station']['instant_speed'] == 0:
             pass
