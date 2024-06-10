@@ -5,10 +5,12 @@ from datetime import datetime
 from .constants import *
 from .stations import StationDesign
 import sys
+from googletrans import Translator
 
 class DisplayDesign():
-    def __init__(self, *args, **kwargs):
+    def __init__(self, other_lang="hi", *args, **kwargs):
         self.data_dict = None
+        self.other_lang = other_lang
         try:
             self.root = root = Tk()
         except Exception as e:
@@ -27,7 +29,12 @@ class DisplayDesign():
         self.WINDOW_HEIGHT = self.root.winfo_screenheight()
         self.station_obj = None
         self.cur_formated_date = datetime.now().strftime("%d-%m-%Y")
-        self.getting_data = False
+        self.getting_data = True
+        self.in_english = False
+        self.translator = Translator()
+        self.info_text = 'Indian Railways welcome you'
+        self.next_stat_pre = "Next Halting Station"
+        self.next_station = None
 
     def prevent_close(self):
         print("Window can not be closed")
@@ -111,10 +118,10 @@ class DisplayDesign():
         
 
         # Create a label inside the inner frame
-        label_text = "Bhopal Junction"
+        label_text = self.data_dict['train']['from_station']
         label_font_size = self.calculate_font_size(label_text, inner_frame_width)
-        label = Label(self.inner_frame, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size, "bold"), wraplength=inner_frame_width)
-        label.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
+        self.from_stat_label = Label(self.inner_frame, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size, "bold"), wraplength=inner_frame_width)
+        self.from_stat_label.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
         # label.configure(wraplength=inner_frame_width)
 
         inner_frame3_width = 45
@@ -138,11 +145,11 @@ class DisplayDesign():
         self.inner_frame2 = Frame(self.new_header, bg=HEADER_BG_COLOR, width=inner_frame2_width)
         self.inner_frame2.pack(side=LEFT, fill=Y)
 
-        label_text = "Virangana Lakshmibai Jhansi Junction"
-        label_text = "Vidisha "
+        # label_text = "Virangana Lakshmibai Jhansi Junction"
+        label_text = self.data_dict['train']['to_station']
         label_font_size = self.calculate_font_size(label_text, inner_frame2_width)
-        label = Label(self.inner_frame2, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size, "bold"), wraplength=inner_frame_width)
-        label.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
+        self.to_stat_label = Label(self.inner_frame2, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size, "bold"), wraplength=inner_frame_width)
+        self.to_stat_label.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
 
         
         inner_frame3_width = int(self.WINDOW_WIDTH * 0.25)
@@ -200,8 +207,8 @@ class DisplayDesign():
 
     def body(self):
         self.info_frame = Frame(self.body_frame, bg=HEADER_TEXT_COLOR)
-        info_text = 'Indian Railways welcome you'
-        self.info_L = Label(self.info_frame, text=info_text, font=(FONT_TYPE, 70, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
+        # self.info_text = 'Indian Railways welcome you'
+        self.info_L = Label(self.info_frame, text=self.info_text, font=(FONT_TYPE, 70, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
         self.info_L.pack(padx=20 )
         # self.info_L.configure(wraplength=self.WINDOW_WIDTH/2)
         self.info_L.place(relx=0.5, rely=0.5, anchor="center")
@@ -217,10 +224,10 @@ class DisplayDesign():
 
         inner_frame2_width = int(self.WINDOW_WIDTH/2)
 
-        label_text = "Next Halting Station"
-        label_font_size = self.calculate_font_size(label_text, inner_frame2_width)
+        
+        label_font_size = self.calculate_font_size(self.next_stat_pre, inner_frame2_width)
 
-        self.w1 = Label(self.data_left_frame, text=label_text, font=(FONT_TYPE, label_font_size, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
+        self.w1 = Label(self.data_left_frame, text=self.next_stat_pre, font=(FONT_TYPE, label_font_size, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
         self.w1.pack(padx=20 )
         self.w1.configure(wraplength=self.WINDOW_WIDTH/2)
         self.w1.place(relx=0.5, rely=0.5, anchor="center")
@@ -288,13 +295,61 @@ class DisplayDesign():
 
 
         self.update_page()
+        self.switch_language()
 
+    def translate_text(self, text, dest_language):
+        translation = self.translator.translate(text, dest=dest_language)
+        return translation.text
+    
+    def switch_language(self):
+        self.in_english = False if self.in_english  else True
+        # Apply the language change to your text elements as needed
+        self.update_language_in_ui()
+        self.root.after(60000, self.switch_language)  # Schedule the next switch
+
+    def update_language_in_ui(self):
+        # translated_text = self.translate_text(self.info_L.cget("text"), self.current_language)
+        
+        # Update all labels with the translated text
+        if self.in_english:
+            self.info_L.config(text=self.info_text)
+            self.from_stat_label.config(text=self.data_dict['train']['from_station'])
+            self.to_stat_label.config(text=self.data_dict['train']['to_station'])
+            self.w1.config(text=self.next_stat_pre)
+            self.w2.config(text=self.next_station)
+            items = self.station_obj.canvas.find_all()  # Find all items on the canvas
+            for item in items:
+                tags = self.station_obj.canvas.gettags(item)  # Get all tags for each item
+                # print(f"Item {item} has tags: {tags}")
+                if tags:
+                    tag = tags[0]
+                    tag_station = next((station for station in self.data_dict['stations'] if station['abbr'] == tag), None)
+                    if tag_station:
+                        self.station_obj.canvas.itemconfig(tag, text=tag_station['name'])
+        else:
+            self.info_L.config(text=self.translated_info_text)
+            # print('self.data_dict')
+            # print(self.data_dict)
+            self.from_stat_label.config(text=self.data_dict['train']['translated_from_station'])
+            self.to_stat_label.config(text=self.data_dict['train']['translated_to_station'])
+            self.w1.config(text=self.translated_next_stat_pre)
+
+            self.w2.config(text=list(filter(lambda x: x.get('name') == self.next_station, self.data_dict['stations']))[0]['translated_name'])
+            items = self.station_obj.canvas.find_all()  # Find all items on the canvas
+            for item in items:
+                tags = self.station_obj.canvas.gettags(item)  # Get all tags for each item
+                # print(f"Item {item} has tags: {tags}")
+                if tags:
+                    tag = tags[0]
+                    tag_station = next((station for station in self.data_dict['stations'] if station['abbr'] == tag), None)
+                    if tag_station:
+                        self.station_obj.canvas.itemconfig(tag, text=tag_station['translated_name'])
     def update_page(self):
         if not self.getting_data:
             self.data_left_frame.pack_forget()
             self.data_right_frame.pack_forget()
             self.canvas_page.pack_forget()
-            self.info_frame.pack(expand=True, fill="both", side="left")
+            self.info_frame.pack(expand=True, fill="both")
         else :
             if self.current_page == 1:
                 self.canvas_page.pack(expand=True, fill="both")
@@ -311,22 +366,50 @@ class DisplayDesign():
         # self.current_page = 1
         self.root.after(10000, self.update_page)
 
+    def create_translated_data(self):
+        self.data_dict['train']['translated_name'] =  self.translate_text(self.data_dict['train']['name'], self.other_lang)
+        self.data_dict['train']['translated_from_station'] =  self.translate_text(self.data_dict['train']['from_station'], self.other_lang)
+        self.data_dict['train']['translated_to_station'] =  self.translate_text(self.data_dict['train']['to_station'], self.other_lang)
+        self.data_dict['next_station']['translated_name'] =  self.translate_text(self.data_dict['next_station']['name'], self.other_lang)
+        self.translated_info_text = self.translate_text(self.info_text, self.other_lang)
+        self.translated_next_stat_pre = self.translate_text(self.next_stat_pre, self.other_lang)
+        for station in self.data_dict['stations']:
+            station['translated_name'] =  self.translate_text(station['name'], self.other_lang)
 
-    def run(self, data):
-        self.data_dict = data
+        # print("translated_data_object is")
+        # print(self.data_dict)
+
+    def run(self, data=None):
+        if data is not None:
+            self.data_dict = data
+            self.other_lang = data['next_station'].get('other_lang', 'hi')
+            self.next_station = self.data_dict['next_station']['name']
+            self.create_translated_data()
         self.main_frame()
         self.sub_frames()
+#         update_data = {'next_station': {'name': 'Khurai', 'lat': '24.052270', 'lon': '78.331110', 'curr_lat': '24.065403', 'curr_lon': '78.322474', 'order': 6, 'remaining_distance': 
+# 1.7033560828139973, 'is_crossed': False, 'actual_arrival_time': False, 'actual_departure_time': False, 'abbr': 'KYE', 'distance': 21.7, 'total_distance': 160.4, 'estimate_time': '20:30', 'depart_time': '20:32', 'halt_time': 2, 'total_time_to_reach': '2024-06-03T18:44:58.049142', 'instant_distance': 2.26, 'instant_speed': 32, 'late_by': 'Train is early by 1 hour 45 minutes'}}
+        update_data = {'next_station': {'other_lang': 'gu', 'name': 'Khurai', 'lat': '24.052270', 'lon': '78.331110', 'curr_lat': '24.175707', 'curr_lon': '78.189472', 'order': 6, 'remaining_distance': 
+19.87543677349387, 'is_crossed': False, 'actual_arrival_time': False, 'actual_departure_time': False, 'abbr': 'KYE', 'distance': 21.7, 'total_distance': 160.4, 
+'estimate_time': '20:30', 'depart_time': '20:32', 'halt_time': 2, 'total_time_to_reach': '2024-06-04T16:21:08.548189', 'instant_distance': 6.94, 'instant_speed': 46, 'late_by': 'Train is early by 4 hours 8 minutes'}}
+        self.update_data(update_data)
         self.root.mainloop()
 
     def update_data(self, data):
-        self.data_dict = data
+        self.data_dict['next_station'] = data['next_station']
         # try:
         print('station_obj : is none')
         # print(self.station_obj)
         if self.station_obj is not None:
             print('station object created')
             next_station_name = data['next_station']['name']
-            self.w2.config(text=next_station_name)
+            # self.w2.config(text=next_station_name)
+            other_lang = data['next_station'].get('other_lang', 'hi')
+            if other_lang != self.other_lang:
+                self.other_lang = other_lang
+                self.create_translated_data()
+            print('other language is ', self.other_lang)
+            self.next_station = next_station_name
             inst_speed = round(data['next_station']['instant_speed'], 2)
             inst_speed_str = str(inst_speed)+" km/h"
             self.top_right_label6.config(text=inst_speed_str)
