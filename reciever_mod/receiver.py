@@ -211,7 +211,12 @@ class Receiver:
             print(e)
 
         # Listen for incoming connections
-        server_socket.listen(1)
+        try:
+            server_socket.listen(1)
+        except OSError as e:
+            print(e)
+        except Exception as e:
+            print(e)
         
         try:
 

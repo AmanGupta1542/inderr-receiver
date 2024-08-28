@@ -6,6 +6,8 @@ from .constants import *
 from .stations import StationDesign
 import sys
 from googletrans import Translator
+from .my_logging import logger
+# logger.error("An error occurred", exc_info=True)  ## Example
 
 class DisplayDesign():
     def __init__(self, other_lang="hi", *args, **kwargs):
@@ -29,7 +31,7 @@ class DisplayDesign():
         self.WINDOW_HEIGHT = self.root.winfo_screenheight()
         self.station_obj = None
         self.cur_formated_date = datetime.now().strftime("%d-%m-%Y")
-        self.getting_data = True
+        self.getting_data = False
         self.in_english = False
         self.translator = Translator()
         self.info_text = 'Indian Railways welcome you'
@@ -118,9 +120,10 @@ class DisplayDesign():
         
 
         # Create a label inside the inner frame
-        label_text = self.data_dict['train']['from_station']
+        label_text = self.data_dict['train']['from_station'] if self.data_dict else ''
         label_font_size = self.calculate_font_size(label_text, inner_frame_width)
-        self.from_stat_label = Label(self.inner_frame, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size, "bold"), wraplength=inner_frame_width)
+
+        self.from_stat_label = Label(self.inner_frame, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", 64, "bold"), wraplength=inner_frame_width)
         self.from_stat_label.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
         # label.configure(wraplength=inner_frame_width)
 
@@ -129,26 +132,27 @@ class DisplayDesign():
         self.inner_frame3 = Frame(self.new_header, bg=HEADER_BG_COLOR, width=inner_frame3_width)
         self.inner_frame3.pack(side=LEFT, fill=Y)
         height_inner_frame3 = int(self.header_height //2)
-        # Create a canvas covering the entire frame
-        canvas = Canvas(self.inner_frame3, bg=HEADER_BG_COLOR, width=inner_frame3_width, bd=0, highlightthickness=0)
-        canvas.pack(fill=BOTH, expand=True)
-        print("arrow frame width", inner_frame3_width)
+        if(self.data_dict):
+            # Create a canvas covering the entire frame
+            canvas = Canvas(self.inner_frame3, bg=HEADER_BG_COLOR, width=inner_frame3_width, bd=0, highlightthickness=0)
+            canvas.pack(fill=BOTH, expand=True)
+            print("arrow frame width", inner_frame3_width)
+            print('start2')
+            # drawing arrow in the canvas
+            canvas.create_line(0, height_inner_frame3, 30, height_inner_frame3, width=10, fill="black")
 
-        # drawing arrow in the canvas
-        canvas.create_line(0, height_inner_frame3, 30, height_inner_frame3, width=10, fill="black")
-
-        # Draw the triangle
-        triangle_points = [(30, height_inner_frame3-10), (30, height_inner_frame3+10), (45, height_inner_frame3)]
-        canvas.create_polygon(triangle_points, fill="black", outline="black")
+            # Draw the triangle
+            triangle_points = [(30, height_inner_frame3-10), (30, height_inner_frame3+10), (45, height_inner_frame3)]
+            canvas.create_polygon(triangle_points, fill="black", outline="black")
 
         inner_frame2_width = int(self.WINDOW_WIDTH * 0.35)
         self.inner_frame2 = Frame(self.new_header, bg=HEADER_BG_COLOR, width=inner_frame2_width)
         self.inner_frame2.pack(side=LEFT, fill=Y)
 
         # label_text = "Virangana Lakshmibai Jhansi Junction"
-        label_text = self.data_dict['train']['to_station']
+        label_text = self.data_dict['train']['to_station'] if self.data_dict else ''
         label_font_size = self.calculate_font_size(label_text, inner_frame2_width)
-        self.to_stat_label = Label(self.inner_frame2, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size, "bold"), wraplength=inner_frame_width)
+        self.to_stat_label = Label(self.inner_frame2, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", 64, "bold"), wraplength=inner_frame_width)
         self.to_stat_label.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
 
         
@@ -198,11 +202,12 @@ class DisplayDesign():
 
     def calculate_font_size(self, text, frame_width):
         font_size = 1
-        while True:
-            label_width = Label(self.inner_frame, text=text, font=("Arial", font_size)).winfo_reqwidth()
-            if label_width >= frame_width:
-                break
-            font_size += 1
+        if text != '':
+            while True:
+                label_width = Label(self.inner_frame, text=text, font=("Arial", font_size)).winfo_reqwidth()
+                if label_width >= frame_width:
+                    break
+                font_size += 1
         return font_size
 
     def body(self):
@@ -227,14 +232,14 @@ class DisplayDesign():
         
         label_font_size = self.calculate_font_size(self.next_stat_pre, inner_frame2_width)
 
-        self.w1 = Label(self.data_left_frame, text=self.next_stat_pre, font=(FONT_TYPE, label_font_size, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
+        self.w1 = Label(self.data_left_frame, text=self.next_stat_pre, font=(FONT_TYPE, 80, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
         self.w1.pack(padx=20 )
         self.w1.configure(wraplength=self.WINDOW_WIDTH/2)
         self.w1.place(relx=0.5, rely=0.5, anchor="center")
 
         label_text2 = "Virangana Lakshmibai Jhansi Junction"
         label_font_size2 = self.calculate_font_size(label_text2, inner_frame2_width)
-        self.w2 = Label(self.data_right_frame, text=label_text2, font=(FONT_TYPE, label_font_size, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
+        self.w2 = Label(self.data_right_frame, text=label_text2, font=(FONT_TYPE, 80, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
         self.w2.pack(padx=20 )
         self.w2.configure(wraplength=self.WINDOW_WIDTH/2)
         self.w2.place(relx=0.5, rely=0.5, anchor="center")
@@ -313,37 +318,40 @@ class DisplayDesign():
         # Update all labels with the translated text
         if self.in_english:
             self.info_L.config(text=self.info_text)
-            self.from_stat_label.config(text=self.data_dict['train']['from_station'])
-            self.to_stat_label.config(text=self.data_dict['train']['to_station'])
-            self.w1.config(text=self.next_stat_pre)
-            self.w2.config(text=self.next_station)
-            items = self.station_obj.canvas.find_all()  # Find all items on the canvas
-            for item in items:
-                tags = self.station_obj.canvas.gettags(item)  # Get all tags for each item
-                # print(f"Item {item} has tags: {tags}")
-                if tags:
-                    tag = tags[0]
-                    tag_station = next((station for station in self.data_dict['stations'] if station['abbr'] == tag), None)
-                    if tag_station:
-                        self.station_obj.canvas.itemconfig(tag, text=tag_station['name'])
+            if self.data_dict:
+                self.from_stat_label.config(text=self.data_dict['train']['from_station'])
+                self.to_stat_label.config(text=self.data_dict['train']['to_station'])
+                self.w1.config(text=self.next_stat_pre)
+                self.w2.config(text=self.next_station)
+                if self.station_obj:
+                    items = self.station_obj.canvas.find_all()  # Find all items on the canvas
+                    for item in items:
+                        tags = self.station_obj.canvas.gettags(item)  # Get all tags for each item
+                        # print(f"Item {item} has tags: {tags}")
+                        if tags:
+                            tag = tags[0]
+                            tag_station = next((station for station in self.data_dict['stations'] if station['abbr'] == tag), None)
+                            if tag_station:
+                                self.station_obj.canvas.itemconfig(tag, text=tag_station['name'])
         else:
             self.info_L.config(text=self.translated_info_text)
             # print('self.data_dict')
             # print(self.data_dict)
-            self.from_stat_label.config(text=self.data_dict['train']['translated_from_station'])
-            self.to_stat_label.config(text=self.data_dict['train']['translated_to_station'])
-            self.w1.config(text=self.translated_next_stat_pre)
+            if self.data_dict:
+                self.from_stat_label.config(text=self.data_dict['train']['translated_from_station'])
+                self.to_stat_label.config(text=self.data_dict['train']['translated_to_station'])
+                self.w1.config(text=self.translated_next_stat_pre)
 
-            self.w2.config(text=list(filter(lambda x: x.get('name') == self.next_station, self.data_dict['stations']))[0]['translated_name'])
-            items = self.station_obj.canvas.find_all()  # Find all items on the canvas
-            for item in items:
-                tags = self.station_obj.canvas.gettags(item)  # Get all tags for each item
-                # print(f"Item {item} has tags: {tags}")
-                if tags:
-                    tag = tags[0]
-                    tag_station = next((station for station in self.data_dict['stations'] if station['abbr'] == tag), None)
-                    if tag_station:
-                        self.station_obj.canvas.itemconfig(tag, text=tag_station['translated_name'])
+                self.w2.config(text=list(filter(lambda x: x.get('name') == self.next_station, self.data_dict['stations']))[0]['translated_name'])
+                items = self.station_obj.canvas.find_all()  # Find all items on the canvas
+                for item in items:
+                    tags = self.station_obj.canvas.gettags(item)  # Get all tags for each item
+                    # print(f"Item {item} has tags: {tags}")
+                    if tags:
+                        tag = tags[0]
+                        tag_station = next((station for station in self.data_dict['stations'] if station['abbr'] == tag), None)
+                        if tag_station:
+                            self.station_obj.canvas.itemconfig(tag, text=tag_station['translated_name'])
     def update_page(self):
         if not self.getting_data:
             self.data_left_frame.pack_forget()
@@ -385,6 +393,8 @@ class DisplayDesign():
             self.other_lang = data['next_station'].get('other_lang', 'hi')
             self.next_station = self.data_dict['next_station']['name']
             self.create_translated_data()
+        else :
+            self.translated_info_text = self.translate_text(self.info_text, self.other_lang)
         self.main_frame()
         self.sub_frames()
         self.root.mainloop()
