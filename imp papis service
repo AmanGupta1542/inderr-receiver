@@ -1,0 +1,19 @@
+[Unit]
+Description=PAPIS Python Service
+After=graphical.target
+
+[Service]
+User=mistpl
+Group=mistpl
+WorkingDirectory=/home/mistpl/inderr-receiver
+Environment="PATH=/home/mistpl/inderr-receiver/venv/bin"
+Environment="Display=:99"
+Environment="XAUTHORITY=/home/mistpl/.Xauthority"
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+RestartSec=10
+ExecStart=/home/mistpl/inderr-receiver/start_papis.sh
+
+[Install]
+WantedBy=graphical.target

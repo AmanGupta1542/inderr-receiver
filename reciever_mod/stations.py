@@ -595,7 +595,7 @@ class StationDesign(tk.Frame):
                 # self.canvas.after(1, self.move_train) # increase value to slow dot move speed
                 self.canvas.delete("train")
                 self.train = self.canvas.create_oval(self.p, self.q, self.p + (self.circle_radius*2), self.q + (self.circle_radius*2), fill="red", tag='train')
-
+            return move_train_forward
     def draw_station_name(self):
         i = 0
         self.canvas.create_text(self.x-300, self.y+40, text="ETA", font=('Times New Roman', 18, 'bold'))
@@ -703,6 +703,7 @@ class StationDesign(tk.Frame):
         
         
     def update_train_location(self, data, late_by_color):
+        is_dest_reached = True
         next_station = list(filter(lambda x: x.get('name') == data['next_station']['name'], self.stations))[0]
         prev_station = list(filter(lambda x: x.get('order') == int(next_station['order'])-1, self.stations))[0]
         if self.is_restarted:
@@ -712,6 +713,7 @@ class StationDesign(tk.Frame):
                 else:
                     add_radius = self.circle_radius if self.stations[i]['order'] == 1 else (self.circle_radius*2)
                     self.move_train_by_loc(DISTANCE_BW_ST_IN_PX+add_radius, self.stations[i]['x_coord'])
+            self.is_restarted = False
         print('supdate_train_location run')
         self.update_train_rech_depart_time(data['next_station'], late_by_color)
         distance_travel = data['next_station']['instant_distance']
@@ -737,7 +739,8 @@ class StationDesign(tk.Frame):
             if remain_dis <= 1:
                 return_stat = True
                 add_radius = self.circle_radius if prev_station['order'] == 1 else (self.circle_radius*2)
-                self.move_train_by_loc(DISTANCE_BW_ST_IN_PX+(add_radius), prev_station['x_coord'])
+                # is_dest_reached is False when destination is reached
+                is_dest_reached = self.move_train_by_loc(DISTANCE_BW_ST_IN_PX+(add_radius), prev_station['x_coord'])
                 print("************************************************************")
                 print('Remaining distance is less then one,', DISTANCE_BW_ST_IN_PX+(add_radius), prev_station['x_coord'])
             elif remain_dis >=  (data['next_station']['distance'] - 1):
@@ -753,8 +756,10 @@ class StationDesign(tk.Frame):
                 # self.move_train_by_loc(0, prev_station['x_coord'])
             else:
                 return_stat = False
-                self.move_train_by_loc(train_px_move, prev_station['x_coord'])
-        return return_stat
+                # is_dest_reached is False when destination is reached
+                is_dest_reached = self.move_train_by_loc(train_px_move, prev_station['x_coord'])
+        print('Destination Reaching Status', is_dest_reached)
+        return return_stat, (not is_dest_reached)
         # data will be 
         # data = {
         #     'next_station': {'name': 'Vidisha', 'lat': Decimal('23.522687'), 'lon': Decimal('77.815174'), 'order': 2, 'distance': 49.70376998384893}, 

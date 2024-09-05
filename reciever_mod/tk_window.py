@@ -37,6 +37,10 @@ class DisplayDesign():
         self.info_text = 'Indian Railways welcome you'
         self.next_stat_pre = "Next Halting Station"
         self.next_station = None
+        self.leftTopTotal = 3
+        self.leftTop = 1
+        self.first_tranlation = True
+        self.journy_complete = False
 
     def prevent_close(self):
         print("Window can not be closed")
@@ -123,7 +127,7 @@ class DisplayDesign():
         label_text = self.data_dict['train']['from_station'] if self.data_dict else ''
         label_font_size = self.calculate_font_size(label_text, inner_frame_width)
 
-        self.from_stat_label = Label(self.inner_frame, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", 64, "bold"), wraplength=inner_frame_width)
+        self.from_stat_label = Label(self.inner_frame, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", 28, "bold"), wraplength=inner_frame_width)
         self.from_stat_label.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
         # label.configure(wraplength=inner_frame_width)
 
@@ -132,18 +136,19 @@ class DisplayDesign():
         self.inner_frame3 = Frame(self.new_header, bg=HEADER_BG_COLOR, width=inner_frame3_width)
         self.inner_frame3.pack(side=LEFT, fill=Y)
         height_inner_frame3 = int(self.header_height //2)
-        if(self.data_dict):
+        if(True):
             # Create a canvas covering the entire frame
-            canvas = Canvas(self.inner_frame3, bg=HEADER_BG_COLOR, width=inner_frame3_width, bd=0, highlightthickness=0)
-            canvas.pack(fill=BOTH, expand=True)
+            self.arrow_canvas = Canvas(self.inner_frame3, bg=HEADER_BG_COLOR, width=inner_frame3_width, bd=0, highlightthickness=0)
+            self.arrow_canvas.pack(fill=BOTH, expand=True)
             print("arrow frame width", inner_frame3_width)
             print('start2')
             # drawing arrow in the canvas
-            canvas.create_line(0, height_inner_frame3, 30, height_inner_frame3, width=10, fill="black")
+            self.arrow_canvas.create_line(0, height_inner_frame3, 30, height_inner_frame3, width=10, fill="black")
 
             # Draw the triangle
             triangle_points = [(30, height_inner_frame3-10), (30, height_inner_frame3+10), (45, height_inner_frame3)]
-            canvas.create_polygon(triangle_points, fill="black", outline="black")
+            self.arrow_canvas.create_polygon(triangle_points, fill="black", outline="black")
+            self.arrow_canvas.pack_forget()
 
         inner_frame2_width = int(self.WINDOW_WIDTH * 0.35)
         self.inner_frame2 = Frame(self.new_header, bg=HEADER_BG_COLOR, width=inner_frame2_width)
@@ -152,7 +157,7 @@ class DisplayDesign():
         # label_text = "Virangana Lakshmibai Jhansi Junction"
         label_text = self.data_dict['train']['to_station'] if self.data_dict else ''
         label_font_size = self.calculate_font_size(label_text, inner_frame2_width)
-        self.to_stat_label = Label(self.inner_frame2, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", 64, "bold"), wraplength=inner_frame_width)
+        self.to_stat_label = Label(self.inner_frame2, text=label_text, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", 28, "bold"), wraplength=inner_frame_width)
         self.to_stat_label.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
 
         
@@ -161,27 +166,28 @@ class DisplayDesign():
         self.inner_frame3.pack(side=RIGHT, fill=Y)
 
         label_text1 = datetime.now().strftime("%d-%m-%Y")
-        label_font_size = self.calculate_font_size(label_text1, inner_frame3_width)
-        self.top_right_label1 = Label(self.inner_frame3, text=self.cur_formated_date, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-7, "bold"))
+        # label_font_size = self.calculate_font_size(label_text1, inner_frame3_width)
+        
+        self.top_right_label1 = Label(self.inner_frame3, text=self.cur_formated_date, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", 30, "bold"))
         self.top_right_label1.pack(pady=10, fill="x", expand=True)
         label_text2 = datetime.now().strftime("%H:%M:%S")
-        self.top_right_label2 = Label(self.inner_frame3, text='', bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-7, "bold"))
+        self.top_right_label2 = Label(self.inner_frame3, text='', bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", 30, "bold"))
         self.top_right_label2.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
 
         label_text3 = "Next Stop"
-        label_font_size = self.calculate_font_size(label_text3, inner_frame3_width)
-        self.top_right_label3 = Label(self.inner_frame3, text=label_text3, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-18, "bold"))
+        # label_font_size = self.calculate_font_size(label_text3, inner_frame3_width)
+        self.top_right_label3 = Label(self.inner_frame3, text=label_text3, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", 30, "bold"))
         self.top_right_label3.pack(pady=10, fill="x", expand=True)
         label_text4 = str(120)+" km"
-        self.top_right_label4 = Label(self.inner_frame3, text='', bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-18, "bold"))
+        self.top_right_label4 = Label(self.inner_frame3, text='', bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", 30, "bold"))
         self.top_right_label4.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
 
         label_text5 = "Speed"
-        label_font_size = self.calculate_font_size(label_text5, inner_frame3_width)
-        self.top_right_label5 = Label(self.inner_frame3, text=label_text5, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-57, "bold"))
+        # label_font_size = self.calculate_font_size(label_text5, inner_frame3_width)
+        self.top_right_label5 = Label(self.inner_frame3, text=label_text5, bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", 30, "bold"))
         self.top_right_label5.pack(pady=10, fill="x", expand=True)
         label_text6 = str(120)+" kmph"
-        self.top_right_label6 = Label(self.inner_frame3, text='', bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", label_font_size-57, "bold"))
+        self.top_right_label6 = Label(self.inner_frame3, text='', bg=HEADER_BG_COLOR, fg=HEADER_TEXT_COLOR, font=("Arial", 30, "bold"))
         self.top_right_label6.pack(pady=10, fill="x", expand=True)  # Adjust padding as needed
         
         def update_time():
@@ -213,7 +219,7 @@ class DisplayDesign():
     def body(self):
         self.info_frame = Frame(self.body_frame, bg=HEADER_TEXT_COLOR)
         # self.info_text = 'Indian Railways welcome you'
-        self.info_L = Label(self.info_frame, text=self.info_text, font=(FONT_TYPE, 70, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
+        self.info_L = Label(self.info_frame, text=self.info_text, font=(FONT_TYPE, 40, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
         self.info_L.pack(padx=20 )
         # self.info_L.configure(wraplength=self.WINDOW_WIDTH/2)
         self.info_L.place(relx=0.5, rely=0.5, anchor="center")
@@ -232,14 +238,14 @@ class DisplayDesign():
         
         label_font_size = self.calculate_font_size(self.next_stat_pre, inner_frame2_width)
 
-        self.w1 = Label(self.data_left_frame, text=self.next_stat_pre, font=(FONT_TYPE, 80, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
+        self.w1 = Label(self.data_left_frame, text=self.next_stat_pre, font=(FONT_TYPE, 40, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
         self.w1.pack(padx=20 )
         self.w1.configure(wraplength=self.WINDOW_WIDTH/2)
         self.w1.place(relx=0.5, rely=0.5, anchor="center")
 
-        label_text2 = "Virangana Lakshmibai Jhansi Junction"
+        label_text2 = ""
         label_font_size2 = self.calculate_font_size(label_text2, inner_frame2_width)
-        self.w2 = Label(self.data_right_frame, text=label_text2, font=(FONT_TYPE, 80, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
+        self.w2 = Label(self.data_right_frame, text=label_text2, font=(FONT_TYPE, 40, 'bold'), bg=HEADER_TEXT_COLOR, fg=HEADER_BG_COLOR)
         self.w2.pack(padx=20 )
         self.w2.configure(wraplength=self.WINDOW_WIDTH/2)
         self.w2.place(relx=0.5, rely=0.5, anchor="center")
@@ -303,8 +309,11 @@ class DisplayDesign():
         self.switch_language()
 
     def translate_text(self, text, dest_language):
-        translation = self.translator.translate(text, dest=dest_language)
-        return translation.text
+        try:
+            translation = self.translator.translate(text, dest=dest_language)
+            return translation.text
+        except Exception as e:
+                return text
     
     def switch_language(self):
         self.in_english = False if self.in_english  else True
@@ -323,11 +332,12 @@ class DisplayDesign():
                 self.to_stat_label.config(text=self.data_dict['train']['to_station'])
                 self.w1.config(text=self.next_stat_pre)
                 self.w2.config(text=self.next_station)
+                print(self.to_stat_label)
                 if self.station_obj:
                     items = self.station_obj.canvas.find_all()  # Find all items on the canvas
                     for item in items:
                         tags = self.station_obj.canvas.gettags(item)  # Get all tags for each item
-                        # print(f"Item {item} has tags: {tags}")
+                        print(f"english Item {item} has tags: {tags}")
                         if tags:
                             tag = tags[0]
                             tag_station = next((station for station in self.data_dict['stations'] if station['abbr'] == tag), None)
@@ -341,15 +351,22 @@ class DisplayDesign():
                 self.from_stat_label.config(text=self.data_dict['train']['translated_from_station'])
                 self.to_stat_label.config(text=self.data_dict['train']['translated_to_station'])
                 self.w1.config(text=self.translated_next_stat_pre)
-
-                self.w2.config(text=list(filter(lambda x: x.get('name') == self.next_station, self.data_dict['stations']))[0]['translated_name'])
+                try:
+                    self.w2.config(text=list(filter(lambda x: x.get('name') == self.next_station, self.data_dict['stations']))[0]['translated_name'])
+                    print('Translated next station is', list(filter(lambda x: x.get('name') == self.next_station, self.data_dict['stations']))[0])
+                except Exception as e:
+                    print('not getting next station translated name')
+                    print(self.data_dict['stations'])
+                    print(self.next_station)
+                print(self.to_stat_label)
                 items = self.station_obj.canvas.find_all()  # Find all items on the canvas
                 for item in items:
                     tags = self.station_obj.canvas.gettags(item)  # Get all tags for each item
-                    # print(f"Item {item} has tags: {tags}")
+                    print(f"hindi Item {item} has tags: {tags}")
                     if tags:
                         tag = tags[0]
                         tag_station = next((station for station in self.data_dict['stations'] if station['abbr'] == tag), None)
+                        print('Tag station is', tag_station)
                         if tag_station:
                             self.station_obj.canvas.itemconfig(tag, text=tag_station['translated_name'])
     def update_page(self):
@@ -359,20 +376,59 @@ class DisplayDesign():
             self.canvas_page.pack_forget()
             self.info_frame.pack(expand=True, fill="both")
         else :
-            if self.current_page == 1:
-                self.canvas_page.pack(expand=True, fill="both")
+            if self.journy_complete:
                 self.data_left_frame.pack_forget()
                 self.data_right_frame.pack_forget()
-                self.info_frame.pack_forget()
-            elif self.current_page == 2:
                 self.canvas_page.pack_forget()
-                self.data_left_frame.pack(expand=True, fill="both", side="left")
-                self.data_right_frame.pack(expand=True, fill="both", side="right")
-                self.info_frame.pack_forget()
+                self.info_frame.pack(expand=True, fill="both")
+            else :
+                if self.current_page == 1: 
+                    self.canvas_page.pack(expand=True, fill="both")
+                    self.data_left_frame.pack_forget()
+                    self.data_right_frame.pack_forget()
+                    self.info_frame.pack_forget()
+                elif self.current_page == 2:
+                    self.canvas_page.pack_forget()
+                    self.data_left_frame.pack(expand=True, fill="both", side="left")
+                    self.data_right_frame.pack(expand=True, fill="both", side="right")
+                    self.info_frame.pack_forget()
+        if self.data_dict and not self.journy_complete:
+            if self.leftTop == 1:
+                self.leftTop = self.leftTop + 1
+                self.top_right_label1.pack(expand=True, fill="both")
+                self.top_right_label2.pack(expand=True, fill="both")
+                self.top_right_label3.pack_forget()
+                self.top_right_label4.pack_forget()
+                self.top_right_label5.pack_forget()
+                self.top_right_label6.pack_forget()
+            elif self.leftTop == 2:
+                self.leftTop = self.leftTop + 1
+                self.top_right_label3.pack(expand=True, fill="both")
+                self.top_right_label4.pack(expand=True, fill="both")
+                self.top_right_label1.pack_forget()
+                self.top_right_label2.pack_forget()
+                self.top_right_label5.pack_forget()
+                self.top_right_label6.pack_forget()
+            else:
+                self.leftTop = 1
+                self.top_right_label5.pack(expand=True, fill="both")
+                self.top_right_label6.pack(expand=True, fill="both")
+                self.top_right_label1.pack_forget()
+                self.top_right_label2.pack_forget()
+                self.top_right_label3.pack_forget()
+                self.top_right_label4.pack_forget()
+        else:
+            self.top_right_label1.pack(expand=True, fill="both")
+            self.top_right_label2.pack(expand=True, fill="both")
+            self.top_right_label3.pack_forget()
+            self.top_right_label4.pack_forget()
+            self.top_right_label5.pack_forget()
+            self.top_right_label6.pack_forget()
 
         self.current_page = 1 if self.current_page == 2 else 2
         # self.current_page = 1
         self.root.after(10000, self.update_page)
+        
 
     def create_translated_data(self):
         self.data_dict['train']['translated_name'] =  self.translate_text(self.data_dict['train']['name'], self.other_lang)
@@ -384,8 +440,8 @@ class DisplayDesign():
         for station in self.data_dict['stations']:
             station['translated_name'] =  self.translate_text(station['name'], self.other_lang)
 
-        # print("translated_data_object is")
-        # print(self.data_dict)
+        print("translated_data_object is")
+        print(self.data_dict)
 
     def run(self, data=None):
         if data is not None:
@@ -395,23 +451,32 @@ class DisplayDesign():
             self.create_translated_data()
         else :
             self.translated_info_text = self.translate_text(self.info_text, self.other_lang)
+        
         self.main_frame()
         self.sub_frames()
         self.root.mainloop()
 
     def update_data(self, data):
-        self.data_dict['next_station'] = data['next_station']
+        if self.data_dict is None:
+            self.data_dict = data
+            self.from_stat_label.config(text=self.data_dict['train']['from_station'])
+            self.to_stat_label.config(text=self.data_dict['train']['to_station'])
+            
+            self.arrow_canvas.pack(expand=True, fill="both")
+        else:
+            self.data_dict['next_station'] = data['next_station']
         # try:
         print('station_obj : is none')
         # print(self.station_obj)
         if self.station_obj is not None:
             print('station object created')
             next_station_name = data['next_station']['name']
-            # self.w2.config(text=next_station_name)
+            self.w2.config(text=next_station_name)
             other_lang = data['next_station'].get('other_lang', 'hi')
-            if other_lang != self.other_lang:
+            if other_lang != self.other_lang or self.first_tranlation:
                 self.other_lang = other_lang
                 self.create_translated_data()
+                self.first_tranlation = False
             print('other language is ', self.other_lang)
             self.next_station = next_station_name
             inst_speed = round(data['next_station']['instant_speed'], 2)
@@ -425,14 +490,24 @@ class DisplayDesign():
                 color = 'red'
             else:
                 color = 'blue'
-            is_near_station = self.station_obj.update_train_location(data, color)
+            # is_dest_reached is True means destination is reached
+            is_near_station, is_dest_reached = self.station_obj.update_train_location(data, color)
             if is_near_station:
                 self.info_L.config(text="Welcome to the "+next_station_name)
                 self.getting_data = False
             else:
                 self.getting_data = True
+                
+            if is_dest_reached:
+                # done setps on completing journey
+                self.journy_complete = True
         else:
             self.getting_data = False
+            other_lang = data['next_station'].get('other_lang', 'hi')
+            if other_lang != self.other_lang or self.first_tranlation:
+                self.other_lang = other_lang
+                self.create_translated_data()
+                self.first_tranlation = False
             self.station_obj = StationDesign(self.canvas_page, self.canvas_page.winfo_reqheight(), self.canvas_page.winfo_reqwidth(), self.data_dict['stations']) if self.data_dict is not None else None
 
             # self.late.config(fg=color)
